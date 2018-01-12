@@ -103,6 +103,25 @@ box.position.set(-4, 0, 0);
 scene.add( box );
 
 ///////////////////////////////////////////////////////////////////////
+//   a twisting stack of three cubes
+///////////////////////////////////////////////////////////////////////
+
+box0 = new THREE.Mesh( boxGeometry, new THREE.MeshLambertMaterial( {color: 0xffffff} ) ); // white
+box0.position.set(-6, 0, 0);
+scene.add( box0 );
+
+box1 = new THREE.Mesh( boxGeometry, new THREE.MeshLambertMaterial( {color: 0x00ff00} ) ); // green
+box1.position.set(-6.1, 1, 0.1);
+box1.rotation.set(0, 0.5, 0);
+scene.add( box1 );
+
+box2 = new THREE.Mesh( boxGeometry, new THREE.MeshLambertMaterial( {color: 0xffff00} ) ); // yellow
+box2.position.set(-5.9, 2, -0.1);
+box2.rotation.set(0, 1, 0);
+scene.add( box2 );
+
+
+///////////////////////////////////////////////////////////////////////
 //  mcc:  multi-colour cube     [https://stemkoski.github.io/Three.js/HelloWorld.html] 
 ///////////////////////////////////////////////////////////////////////
 
