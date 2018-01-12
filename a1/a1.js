@@ -145,18 +145,28 @@ scene.add( cylinder );
 coneGeometry = new THREE.CylinderGeometry( 0.0, 0.30, 0.80, 20, 4 );
 cone = new THREE.Mesh( coneGeometry, diffuseMaterial);
 cone.position.set(4, 0, 0);
-scene.add( cone);
+scene.add( cone );
 
 /////////////////////////////////////////////////////////////////////////
 // torus
 /////////////////////////////////////////////////////////////////////////
 
-// parameters:   radius of torus, diameter of tube, segments around radius, segments around torus
-torusGeometry = new THREE.TorusGeometry( 1.2, 0.4, 10, 20 );
-torus = new THREE.Mesh( torusGeometry, diffuseMaterial);
+function createTorus() {
+  // parameters:   radius of torus, diameter of tube, segments around radius, segments around torus
+  const torusGeometry = new THREE.TorusGeometry( 1.2, 0.4, 10, 20 );
+  return new THREE.Mesh( torusGeometry, diffuseMaterial);
+}
+
+torus = createTorus();
 torus.position.set(6, 0, 0);   // translation
-torus.rotation.set(0, 0, 0);     // rotation about x,y,z axes
+torus.rotation.set(0, 0, 0);   // rotation about x,y,z axes
 scene.add( torus );
+
+// torus2, parallel to the ground, and linked with torus 1 like a chain
+torus2 = createTorus();
+torus2.position.set(5, 0, 0);   // translation
+torus2.rotation.set(5, 0, 0);   // rotation about x,y,z axes
+scene.add( torus2 );
 
 /////////////////////////////////////
 //  CUSTOM OBJECT 
