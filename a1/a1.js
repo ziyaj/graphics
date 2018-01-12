@@ -13,7 +13,7 @@ console.log('myvector =',myvector);
 var canvas = document.getElementById('canvas');
 var scene = new THREE.Scene();
 var renderer = new THREE.WebGLRenderer();
-renderer.setClearColor(0xd0f0d0); // set background colour
+renderer.setClearColor(0x87cefa); // set background colour -- changed to a blue sky color
 canvas.appendChild(renderer.domElement);
 
 // SETUP CAMERA
@@ -155,29 +155,49 @@ scene.add( cone);
 torusGeometry = new THREE.TorusGeometry( 1.2, 0.4, 10, 20 );
 torus = new THREE.Mesh( torusGeometry, diffuseMaterial);
 torus.position.set(6, 0, 0);   // translation
-torus.rotation.set(0,0,0);     // rotation about x,y,z axes
+torus.rotation.set(0, 0, 0);     // rotation about x,y,z axes
 scene.add( torus );
 
 /////////////////////////////////////
 //  CUSTOM OBJECT 
 ////////////////////////////////////
 
-var geom = new THREE.Geometry(); 
-var v0 = new THREE.Vector3(0,0,0);
-var v1 = new THREE.Vector3(3,0,0);
-var v2 = new THREE.Vector3(0,3,0);
-var v3 = new THREE.Vector3(3,3,0);
+var geom = new THREE.Geometry();
 
-geom.vertices.push(v0);
-geom.vertices.push(v1);
-geom.vertices.push(v2);
-geom.vertices.push(v3);
+(function addVertices(geom) {
+  const s = 3; // side length
+  const h = 2; // height
+  const xshift = 1;
+  const yshift = -3;
 
-geom.faces.push( new THREE.Face3( 0, 1, 2 ) );
-geom.faces.push( new THREE.Face3( 1, 3, 2 ) );
+  var v0 = new THREE.Vector3(0 + xshift, 0, 0 + yshift);
+  var v1 = new THREE.Vector3(0 + xshift, 0, s + yshift);
+  var v2 = new THREE.Vector3(s + xshift, 0, 0 + yshift);
+  var v3 = new THREE.Vector3(s + xshift, 0, s + yshift);
+  var v4 = new THREE.Vector3(s/2 + xshift, h, s/2  + yshift); // top
+
+  geom.vertices.push(v0);
+  geom.vertices.push(v1);
+  geom.vertices.push(v2);
+  geom.vertices.push(v3);
+  geom.vertices.push(v4);
+})(geom);
+
+(function addFaces(geom) {
+  // bottom faces
+  geom.faces.push( new THREE.Face3( 0, 1, 2 ) );
+  geom.faces.push( new THREE.Face3( 1, 2, 3 ) );
+  // side faces
+  geom.faces.push( new THREE.Face3( 0, 1, 4 ) );
+  geom.faces.push( new THREE.Face3( 0, 2, 4 ) );
+  geom.faces.push( new THREE.Face3( 1, 3, 4 ) );
+  geom.faces.push( new THREE.Face3( 2, 3, 4 ) );
+})(geom);
+
 geom.computeFaceNormals();
 
-customObject = new THREE.Mesh( geom, diffuseMaterial2 );
+var diffuseMaterial3 = new THREE.MeshLambertMaterial( {color: 0xffa500, side: THREE.DoubleSide} );
+customObject = new THREE.Mesh( geom, diffuseMaterial3 );
 customObject.position.set(0, 0, -2);
 scene.add(customObject);
 
