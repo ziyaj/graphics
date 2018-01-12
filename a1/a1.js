@@ -88,7 +88,7 @@ scene.add(floor);
 ///////////////////////////////////////////////////////////////////////
 
 sphereGeometry = new THREE.SphereGeometry(0.3, 32, 32);    // radius, segments, segments
-sphere = new THREE.Mesh(sphereGeometry, basicMaterial);
+sphere = new THREE.Mesh(sphereGeometry, new THREE.MeshBasicMaterial( {color: 0xffff00} )); // change the light source color to yellow
 sphere.position.set(0,4,2);
 sphere.position.set(light.position.x, light.position.y, light.position.z);
 scene.add(sphere);
@@ -292,15 +292,34 @@ loadOBJ('obj/armadillo.obj', armadilloMaterial, 1, 0,0,0, 0,Math.PI,0);
 
 var keyboard = new THREEx.KeyboardState();
 function checkKeyboard() {
+  const VAL = 5;
+  const MAX_X = VAL;
+  const MAX_Y = VAL;
+  const MIN_X = -VAL;
+  const MIN_Y = -VAL;
   if (keyboard.pressed("W")) {
     console.log('W pressed');
     light.position.y += 0.1;
-  } else if (keyboard.pressed("S"))
+    if (light.position.y > MAX_Y) {
+      light.position.y = MAX_Y;
+    }
+  } else if (keyboard.pressed("S")) {
     light.position.y -= 0.1;
-  if (keyboard.pressed("A"))
+    if(light.position.y < MIN_Y) {
+      light.position.y = MIN_Y;
+    }
+  }
+  if (keyboard.pressed("A")) {
     light.position.x -= 0.1;
-  else if (keyboard.pressed("D"))
+    if (light.position.x < MIN_X) {
+      light.position.x = MIN_X;
+    }
+  } else if (keyboard.pressed("D")) {
     light.position.x += 0.1;
+    if (light.position.x > MAX_X) {
+      light.position.x = MAX_X;
+    }
+  }
   sphere.position.set(light.position.x, light.position.y, light.position.z);
 }
 
