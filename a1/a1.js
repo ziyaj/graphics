@@ -13,7 +13,7 @@ console.log('myvector =',myvector);
 var canvas = document.getElementById('canvas');
 var scene = new THREE.Scene();
 var renderer = new THREE.WebGLRenderer();
-renderer.setClearColor(0x87cefa); // set background colour -- changed to a blue sky color
+renderer.setClearColor(0x87cefa); // (g) Change the background colour to be a light-blue "sky" colour.
 canvas.appendChild(renderer.domElement);
 
 // SETUP CAMERA
@@ -56,6 +56,8 @@ scene.add(ambientLight);
 var diffuseMaterial = new THREE.MeshLambertMaterial( {color: 0xffffff} );
 var diffuseMaterial2 = new THREE.MeshLambertMaterial( {color: 0xffffff, side: THREE.DoubleSide } );
 var basicMaterial = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+var phongMaterial = new THREE.MeshPhongMaterial( {color: 0xffffff} );
+var normalMaterial = new THREE.MeshNormalMaterial( {color: 0xffffff} );
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////  OBJECTS /////////////////////////////////////////////////
@@ -88,7 +90,7 @@ scene.add(floor);
 ///////////////////////////////////////////////////////////////////////
 
 sphereGeometry = new THREE.SphereGeometry(0.3, 32, 32);    // radius, segments, segments
-sphere = new THREE.Mesh(sphereGeometry, new THREE.MeshBasicMaterial( {color: 0xffff00} )); // change the light source color to yellow
+sphere = new THREE.Mesh(sphereGeometry, new THREE.MeshBasicMaterial( {color: 0xffff00} )); // (l) make the light source yellow
 sphere.position.set(0,4,2);
 sphere.position.set(light.position.x, light.position.y, light.position.z);
 scene.add(sphere);
@@ -98,25 +100,29 @@ scene.add(sphere);
 ///////////////////////////////////////////////////////////////////////
 
 boxGeometry = new THREE.BoxGeometry( 1, 1, 1 );    // width, height, depth
-box = new THREE.Mesh( boxGeometry, diffuseMaterial );
-box.position.set(-4, 0, 0);
+box = new THREE.Mesh( boxGeometry, normalMaterial );
+box.position.set(-2.6, 3, 0);
 scene.add( box );
 
 ///////////////////////////////////////////////////////////////////////
-//   a twisting stack of three cubes
+//  (k) Build a twisting stack of three cubes, coloured while, green, and yellow
+//      (from bottom to top).
 ///////////////////////////////////////////////////////////////////////
 
-box0 = new THREE.Mesh( boxGeometry, new THREE.MeshLambertMaterial( {color: 0xffffff} ) ); // white
-box0.position.set(-6, 0, 0);
+const stack_base_x = -2.6;
+const stack_base_y = 0;
+const stack_base_z = 0;
+const box0 = new THREE.Mesh( boxGeometry, new THREE.MeshPhongMaterial( {color: 0xffffff} ) ); // white
+box0.position.set(stack_base_x, stack_base_y, stack_base_z);
 scene.add( box0 );
 
-box1 = new THREE.Mesh( boxGeometry, new THREE.MeshLambertMaterial( {color: 0x00ff00} ) ); // green
-box1.position.set(-6.1, 1, 0.1);
+const box1 = new THREE.Mesh( boxGeometry, new THREE.MeshPhongMaterial( {color: 0x00ff00} ) ); // green
+box1.position.set(stack_base_x - 0.1, stack_base_y + 1, stack_base_z + 0.1);
 box1.rotation.set(0, 0.5, 0);
 scene.add( box1 );
 
-box2 = new THREE.Mesh( boxGeometry, new THREE.MeshLambertMaterial( {color: 0xffff00} ) ); // yellow
-box2.position.set(-5.9, 2, -0.1);
+const box2 = new THREE.Mesh( boxGeometry, new THREE.MeshPhongMaterial( {color: 0xffff00} ) ); // yellow
+box2.position.set(stack_base_x + 0.1, stack_base_y + 2, stack_base_z - 0.1);
 box2.rotation.set(0, 1, 0);
 scene.add( box2 );
 
@@ -141,7 +147,8 @@ var mccGeometry = new THREE.BoxGeometry( 1.5, 1.5, 1.5, 1, 1, 1 );
 // using THREE.MeshFaceMaterial() in the constructor below
 // causes the mesh to use the materials stored in the geometry
 mcc = new THREE.Mesh( mccGeometry, mccMaterials );
-mcc.position.set(-2,0,0);
+mcc.position.set(-1, 4, 0);
+mcc.rotation.set(0, 1, 1);
 scene.add( mcc );	
 
 /////////////////////////////////////////////////////////////////////////
@@ -150,9 +157,10 @@ scene.add( mcc );
 
 // parameters:    
 //    radiusAtTop, radiusAtBottom, height, segmentsAroundRadius, segmentsAlongHeight, segmentsAlongHeight
-cylinderGeometry = new THREE.CylinderGeometry( 0.30, 0.30, 0.80, 20, 4 );
-cylinder = new THREE.Mesh( cylinderGeometry, diffuseMaterial);
-cylinder.position.set(2, 0, 0);
+const cylinderGeometry = new THREE.CylinderGeometry( 0.30, 0.30, 0.80, 20, 4 );
+const cylinder = new THREE.Mesh( cylinderGeometry, normalMaterial);
+cylinder.position.set(1.3, 0.3, 0);
+cylinder.rotation.set(Math.PI/2, 0, 0);
 scene.add( cylinder );
 
 /////////////////////////////////////////////////////////////////////////
@@ -161,37 +169,39 @@ scene.add( cylinder );
 
 // parameters:    
 //    radiusAtTop, radiusAtBottom, height, segmentsAroundRadius, segmentsAlongHeight, segmentsAlongHeight
-coneGeometry = new THREE.CylinderGeometry( 0.0, 0.30, 0.80, 20, 4 );
-cone = new THREE.Mesh( coneGeometry, diffuseMaterial);
-cone.position.set(4, 0, 0);
+const coneGeometry = new THREE.CylinderGeometry( 0.0, 0.30, 0.80, 20, 4 );
+const cone = new THREE.Mesh( coneGeometry, normalMaterial);
+cone.position.set(0.7, 3.7, 0);
+cone.rotation.set(0, 0, 0);
 scene.add( cone );
 
 /////////////////////////////////////////////////////////////////////////
 // torus
 /////////////////////////////////////////////////////////////////////////
 
-function createTorus() {
-  // parameters:   radius of torus, diameter of tube, segments around radius, segments around torus
-  const torusGeometry = new THREE.TorusGeometry( 1.2, 0.4, 10, 20 );
-  return new THREE.Mesh( torusGeometry, diffuseMaterial);
-}
-
-torus = createTorus();
-torus.position.set(6, 0, 0);   // translation
+const torus = new THREE.Mesh(
+    new THREE.TorusGeometry( 1.2, 0.4, 10, 20 ),
+    phongMaterial
+    );
+torus.position.set(5, 1, 2);   // translation
 torus.rotation.set(0, 0, 0);   // rotation about x,y,z axes
 scene.add( torus );
 
-// torus2, parallel to the ground, and linked with torus 1 like a chain
-torus2 = createTorus();
-torus2.position.set(5, 0, 0);   // translation
-torus2.rotation.set(5, 0, 0);   // rotation about x,y,z axes
+// (j) Create an instance of a second torus.
+const torus2 = new THREE.Mesh(
+    new THREE.TorusGeometry( 1.2, 0.4, 10, 20 ),
+    phongMaterial
+    );
+torus2.position.set(4, 1, 2);   // translation
+torus2.rotation.set(Math.PI / 2, 0, 0);   // rotation about x,y,z axes
 scene.add( torus2 );
 
 /////////////////////////////////////
-//  CUSTOM OBJECT 
+//  CUSTOM OBJECT (i) Change the custom object, which is currently a white square, to be an
+//                    orange pyramid with a square base that is parallel to the ground plane.
 ////////////////////////////////////
 
-var geom = new THREE.Geometry();
+const geom = new THREE.Geometry();
 
 (function addVertices(geom) {
   const s = 3; // side length
@@ -199,34 +209,25 @@ var geom = new THREE.Geometry();
   const xshift = 1;
   const yshift = -3;
 
-  var v0 = new THREE.Vector3(0 + xshift, 0, 0 + yshift);
-  var v1 = new THREE.Vector3(0 + xshift, 0, s + yshift);
-  var v2 = new THREE.Vector3(s + xshift, 0, 0 + yshift);
-  var v3 = new THREE.Vector3(s + xshift, 0, s + yshift);
-  var v4 = new THREE.Vector3(s/2 + xshift, h, s/2  + yshift); // top
-
-  geom.vertices.push(v0);
-  geom.vertices.push(v1);
-  geom.vertices.push(v2);
-  geom.vertices.push(v3);
-  geom.vertices.push(v4);
+  geom.vertices.push( new THREE.Vector3(0 + xshift, 0, 0 + yshift) );
+  geom.vertices.push( new THREE.Vector3(0 + xshift, 0, s + yshift) );
+  geom.vertices.push( new THREE.Vector3(s + xshift, 0, 0 + yshift) );
+  geom.vertices.push( new THREE.Vector3(s + xshift, 0, s + yshift) );
+  geom.vertices.push( new THREE.Vector3(s/2 + xshift, h, s/2  + yshift) ); // top vertice
 })(geom);
 
-(function addFaces(geom) {
-  // bottom faces
-  geom.faces.push( new THREE.Face3( 0, 1, 2 ) );
-  geom.faces.push( new THREE.Face3( 1, 2, 3 ) );
-  // side faces
-  geom.faces.push( new THREE.Face3( 0, 1, 4 ) );
-  geom.faces.push( new THREE.Face3( 0, 2, 4 ) );
-  geom.faces.push( new THREE.Face3( 1, 3, 4 ) );
-  geom.faces.push( new THREE.Face3( 2, 3, 4 ) );
-})(geom);
+// add faces
+geom.faces.push( new THREE.Face3( 0, 1, 2 ) ); // bottom
+geom.faces.push( new THREE.Face3( 1, 2, 3 ) ); // bottom
+geom.faces.push( new THREE.Face3( 0, 1, 4 ) ); // side
+geom.faces.push( new THREE.Face3( 0, 2, 4 ) ); // side
+geom.faces.push( new THREE.Face3( 1, 3, 4 ) ); // side
+geom.faces.push( new THREE.Face3( 2, 3, 4 ) ); // side
 
 geom.computeFaceNormals();
 
-var diffuseMaterial3 = new THREE.MeshLambertMaterial( {color: 0xffa500, side: THREE.DoubleSide} );
-customObject = new THREE.Mesh( geom, diffuseMaterial3 );
+const diffuseMaterial3 = new THREE.MeshLambertMaterial( {color: 0xffa500, side: THREE.DoubleSide} );
+const customObject = new THREE.Mesh( geom, diffuseMaterial3 );
 customObject.position.set(0, 0, -2);
 scene.add(customObject);
 
@@ -284,10 +285,12 @@ function loadOBJ(file, material, scale, xOff, yOff, zOff, xRot, yRot, zRot) {
 }
 
   // now load the actual armadillo
-loadOBJ('obj/armadillo.obj', armadilloMaterial, 1, 0,0,0, 0,Math.PI,0);
+loadOBJ('obj/armadillo.obj', armadilloMaterial, 1, 1, 1.6, 0, 0, Math.PI/2, 0);
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // LISTEN TO KEYBOARD
+// (l) Change the code so that the movement of the light source is
+// bounded to x, y in [-5, 5]
 ///////////////////////////////////////////////////////////////////////////////////////
 
 var keyboard = new THREEx.KeyboardState();
