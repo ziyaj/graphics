@@ -1,6 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 //  UBC CPSC 314,  Vjan2018
 //  Assignment Template
+//  Ziyang Jin
 /////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -105,26 +106,29 @@ class KFobj {
 ////////////////////////////////////////////////////////////////////////
 
 // keyframes for the detailed T-rex:   name, time, [x, y, z]
+const JUMP_HIGHER = 4;
 var trexKFobj = new KFobj(trexSetMatrices);     
-trexKFobj.add(new Keyframe('rest pose', 0.0, [0,1.9,0]));
-trexKFobj.add(new Keyframe('rest pose', 1.0, [1,1.9,0]));
-trexKFobj.add(new Keyframe('rest pose', 2.0, [1,2.9,0]));
-trexKFobj.add(new Keyframe('rest pose', 3.0, [0,2.9,0]));
-trexKFobj.add(new Keyframe('rest pose', 4.0, [0,1.9,0]));
+trexKFobj.add(new Keyframe('rest pose', 0.0, [0, 1.9, 0]));
+trexKFobj.add(new Keyframe('rest pose', 1.0, [1, 1.9, 0]));
+trexKFobj.add(new Keyframe('rest pose', 2.0, [1, 2.9 + JUMP_HIGHER, 0]));
+trexKFobj.add(new Keyframe('rest pose', 3.0, [0, 2.9 + JUMP_HIGHER, 0]));
+trexKFobj.add(new Keyframe('rest pose', 4.0, [0, 1.9, 0]));
 
 // basic interpolation test
 console.log('kf 0.1 = ',trexKFobj.getAvars(0.1));    // interpolate for t=0.1
 console.log('kf 2.9 = ',trexKFobj.getAvars(2.9));    // interpolate for t=2.9
 
 // keyframes for mydino:    name, time, [x, y, theta1, theta2]
-var mydinoKFobj= new KFobj(mydinoSetMatrices);  
-mydinoKFobj.add(new Keyframe('rest pose', 0.0, [8, 1,   30, -30]));
-mydinoKFobj.add(new Keyframe('rest pose', 0.5, [8, 1.8, 20, -20]));
-mydinoKFobj.add(new Keyframe('rest pose', 1.0, [8, 1.8, -20, 20]));
-mydinoKFobj.add(new Keyframe('rest pose', 1.5, [8, 1,   -30, 30]));
-mydinoKFobj.add(new Keyframe('rest pose', 2.0, [8, 1.8, -20, 20]));
-mydinoKFobj.add(new Keyframe('rest pose', 2.5, [8, 1.8, 20, -20]));
-mydinoKFobj.add(new Keyframe('rest pose', 3.0, [8, 1,   30, -30]));
+const OUTER_ANGLE = 60;
+const INNER_ANGLE = 10;
+var mydinoKFobj= new KFobj(mydinoSetMatrices);
+mydinoKFobj.add(new Keyframe('rest pose', 0.0, [8, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 0.5, [8, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 1.0, [8, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 1.5, [8, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 2.0, [8, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 2.5, [8, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 3.0, [8, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
 
 // optional:   allow avar indexing by name
 // i.e., instead of   avar[1]    one can also use:    avar[ trexIndex["y"]]  
@@ -219,29 +223,29 @@ function initLights() {
 
 function initObjects() {
 
-    // torus
-    torusGeometry = new THREE.TorusGeometry( 1, 0.4, 10, 20 );
-    torus = new THREE.Mesh( torusGeometry, diffuseMaterial );
-    torus.position.set(6, 1.2, -8);   // translation
-    torus.rotation.set(0, 0, 0);      // rotation about x,y,z axes
-    scene.add( torus );
+    // // torus
+    // torusGeometry = new THREE.TorusGeometry( 1, 0.4, 10, 20 );
+    // torus = new THREE.Mesh( torusGeometry, diffuseMaterial );
+    // torus.position.set(6, 1.2, -8);   // translation
+    // torus.rotation.set(0, 0, 0);      // rotation about x,y,z axes
+    // scene.add( torus );
 
-    // sphere representing light source
-    sphereGeometry = new THREE.SphereGeometry( 0.3, 32, 32 );    // radius, segments, segments
-    sphere = new THREE.Mesh( sphereGeometry, basicMaterial );    
-    sphere.position.set(0, 4, 2);
-    sphere.position.set(light.position.x, light.position.y, light.position.z);
-    scene.add( sphere );
+    // // sphere representing light source
+    // sphereGeometry = new THREE.SphereGeometry( 0.3, 32, 32 );    // radius, segments, segments
+    // sphere = new THREE.Mesh( sphereGeometry, basicMaterial );    
+    // sphere.position.set(0, 4, 2);
+    // sphere.position.set(light.position.x, light.position.y, light.position.z);
+    // scene.add( sphere );
 
     // world-frame axes
     worldFrame = new THREE.AxisHelper(5) ;
     scene.add( worldFrame );
 
-    // box
-    boxGeometry = new THREE.BoxGeometry( 1, 1, 1 );    // width, height, depth
-    box = new THREE.Mesh( boxGeometry, diffuseMaterial );
-    box.position.set(-6, 0.5, -8);
-    scene.add( box );
+    // // box
+    // boxGeometry = new THREE.BoxGeometry( 1, 1, 1 );    // width, height, depth
+    // box = new THREE.Mesh( boxGeometry, diffuseMaterial );
+    // box.position.set(-6, 0.5, -8);
+    // scene.add( box );
     
     // floor
     floorGeometry = new THREE.PlaneBufferGeometry( 20, 20 );
@@ -250,49 +254,49 @@ function initObjects() {
     floor.rotation.x = Math.PI / 2;
     scene.add( floor );
 
-    // cylinder
-    cylinderGeometry = new THREE.CylinderGeometry( 0.30, 0.30, 1, 20, 4 );
-    cylinder = new THREE.Mesh( cylinderGeometry, diffuseMaterial );
-    scene.add( cylinder );
-    cylinder.matrixAutoUpdate = true;
-    cylinder.position.set(2, 0.5, -8);
+    // // cylinder
+    // cylinderGeometry = new THREE.CylinderGeometry( 0.30, 0.30, 1, 20, 4 );
+    // cylinder = new THREE.Mesh( cylinderGeometry, diffuseMaterial );
+    // scene.add( cylinder );
+    // cylinder.matrixAutoUpdate = true;
+    // cylinder.position.set(2, 0.5, -8);
 
-    //  mcc:  multi-colour cube     [https://stemkoski.github.io/Three.js/HelloWorld.html] 
-    var cubeMaterialArray = [];    // one material for each side of cube;  order: x+,x-,y+,y-,z+,z-
-    cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0xff3333 } ) );
-    cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0xff8800 } ) );
-    cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0xffff33 } ) );
-    cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x33ff33 } ) );
-    cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x3333ff } ) );
-    cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x8833ff } ) );
-    var mccMaterials = new THREE.MeshFaceMaterial( cubeMaterialArray );
-    var mccGeometry = new THREE.BoxGeometry( 1, 1, 1, 1, 1, 1 );   // xyzz size,  xyz # segs
-    mcc = new THREE.Mesh( mccGeometry, mccMaterials );   // 
-    mcc.position.set(-4, 0.5, -8);
-    scene.add( mcc ); 
+    // //  mcc:  multi-colour cube     [https://stemkoski.github.io/Three.js/HelloWorld.html] 
+    // var cubeMaterialArray = [];    // one material for each side of cube;  order: x+,x-,y+,y-,z+,z-
+    // cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0xff3333 } ) );
+    // cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0xff8800 } ) );
+    // cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0xffff33 } ) );
+    // cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x33ff33 } ) );
+    // cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x3333ff } ) );
+    // cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x8833ff } ) );
+    // var mccMaterials = new THREE.MeshFaceMaterial( cubeMaterialArray );
+    // var mccGeometry = new THREE.BoxGeometry( 1, 1, 1, 1, 1, 1 );   // xyzz size,  xyz # segs
+    // mcc = new THREE.Mesh( mccGeometry, mccMaterials );   // 
+    // mcc.position.set(-4, 0.5, -8);
+    // scene.add( mcc ); 
     
-    // cone
-    coneGeometry = new THREE.CylinderGeometry( 0.0, 0.50, 1, 20, 4 ); // rTop, rBot, h, #rsegs, #hsegs
-    cone = new THREE.Mesh( coneGeometry, diffuseMaterial );
-    cone.position.set(-2, 0.5, -8);
-    scene.add( cone );
+    // // cone
+    // coneGeometry = new THREE.CylinderGeometry( 0.0, 0.50, 1, 20, 4 ); // rTop, rBot, h, #rsegs, #hsegs
+    // cone = new THREE.Mesh( coneGeometry, diffuseMaterial );
+    // cone.position.set(-2, 0.5, -8);
+    // scene.add( cone );
 
-    //  CUSTOM OBJECT
-    var geom = new THREE.Geometry(); 
-    var v0 = new THREE.Vector3(0, 0, 0);
-    var v1 = new THREE.Vector3(3, 0, 0);
-    var v2 = new THREE.Vector3(0, 3, 0);
-    var v3 = new THREE.Vector3(3, 3, 0);
-    geom.vertices.push(v0);
-    geom.vertices.push(v1);
-    geom.vertices.push(v2);
-    geom.vertices.push(v3);
-    geom.faces.push( new THREE.Face3( 0, 1, 2 ) );
-    geom.faces.push( new THREE.Face3( 1, 3, 2 ) );
-    geom.computeFaceNormals();
-    customObject = new THREE.Mesh( geom, diffuseMaterial2 );
-    customObject.position.set(0, 0, -10);
-    scene.add( customObject );
+    // //  CUSTOM OBJECT
+    // var geom = new THREE.Geometry(); 
+    // var v0 = new THREE.Vector3(0, 0, 0);
+    // var v1 = new THREE.Vector3(3, 0, 0);
+    // var v2 = new THREE.Vector3(0, 3, 0);
+    // var v3 = new THREE.Vector3(3, 3, 0);
+    // geom.vertices.push(v0);
+    // geom.vertices.push(v1);
+    // geom.vertices.push(v2);
+    // geom.vertices.push(v3);
+    // geom.faces.push( new THREE.Face3( 0, 1, 2 ) );
+    // geom.faces.push( new THREE.Face3( 1, 3, 2 ) );
+    // geom.computeFaceNormals();
+    // customObject = new THREE.Mesh( geom, diffuseMaterial2 );
+    // customObject.position.set(0, 0, -10);
+    // scene.add( customObject );
 
     // laser line
     var geom = new THREE.Geometry(); 
