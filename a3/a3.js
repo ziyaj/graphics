@@ -314,7 +314,7 @@ function initObjects() {
 
     // body
     bodyGeometry = new THREE.BoxGeometry( 0.25, 0.8, 0.5 );    // width, height, depth
-    legGeometry = new THREE.BoxGeometry( 0.15, 1.0, 0.15 );    // width, height, depth
+    legGeometry = new THREE.BoxGeometry( 0.15, 2.0, 0.15 );    // width, height, depth
     body = new THREE.Mesh( bodyGeometry, dinoGreenMaterial );
     leftLeg = new THREE.Mesh( legGeometry, dinoGreenMaterial );
     rightLeg = new THREE.Mesh( legGeometry, dinoGreenMaterial );
@@ -352,13 +352,13 @@ function initFileObjects() {
   };
 
   // Load models;  asynchronous in JS, so wrap code in a fn and pass it the index
-  for(var _key in models) {
+  for (var _key in models) {
     console.log('Key:', _key);
     (function(key) {
       var objLoader = new THREE.OBJLoader(loadingManager);
       objLoader.load(models[key].obj, function(mesh) {
         mesh.traverse(function(node) {
-          if(node instanceof THREE.Mesh) {
+          if (node instanceof THREE.Mesh) {
             node.material = models[key].mtl;
             node.material.shading = THREE.SmoothShading;
           }
@@ -477,14 +477,14 @@ function mydinoSetMatrices(avars) {
   leftLeg.matrix.copy(body.matrix);      // start with the parent's matrix
   leftLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0.0, -0.4, -0.125));     // translate to hip
   leftLeg.matrix.multiply(new THREE.Matrix4().makeRotationZ(avars[2] * Math.PI/180));  // rotate about hip
-  leftLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0, -0.5, 0));            // translate to center of upper leg
+  leftLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0, -1, 0));            // translate to center of upper leg
   leftLeg.updateMatrixWorld();
 
   rightLeg.matrixAutoUpdate = false;
   rightLeg.matrix.copy(body.matrix);     // start with the parent's matrix
   rightLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0.0, -0.4, 0.125));      // translate to hip
   rightLeg.matrix.multiply(new THREE.Matrix4().makeRotationZ(avars[3] * Math.PI/180));  // rotate about hip
-  rightLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0, -0.5, 0));            // translate to center of upper leg
+  rightLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0, -1, 0));            // translate to center of upper leg
   rightLeg.updateMatrixWorld();
 }
 
