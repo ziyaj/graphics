@@ -350,6 +350,7 @@ function initObjects() {
     eyeGeometry = new THREE.SphereGeometry( HEAD_SIZE/8 );
     hipGeometry = new THREE.CylinderGeometry( BODY_WIDTH/2, BODY_WIDTH/2, BODY_WIDTH );
     armGeometry = new THREE.BoxGeometry( BODY_WIDTH/6, BODY_HEIGHT/3, BODY_WIDTH/6 );
+    clawGeometry = new THREE.BoxGeometry( BODY_WIDTH/6, BODY_HEIGHT/6, BODY_WIDTH/6 );
     bodyGeometry = new THREE.BoxGeometry( BODY_WIDTH, BODY_HEIGHT, BODY_DEPTH );    // width, height, depth
     legGeometry = new THREE.BoxGeometry( BODY_WIDTH/1.8, BODY_WIDTH/1.2, BODY_WIDTH/1.8 );    // width, height, depth
     leg2Geometry = new THREE.BoxGeometry( BODY_WIDTH/2.3, BODY_WIDTH/1.6, BODY_WIDTH/2.3 );
@@ -371,6 +372,8 @@ function initObjects() {
     botMouth = new THREE.Mesh( botMouthGeometry, dinoGreenMaterial );
     leftArm = new THREE.Mesh( armGeometry, dinoGreenMaterial );
     rightArm = new THREE.Mesh( armGeometry, dinoGreenMaterial );
+    leftClaw = new THREE.Mesh( clawGeometry, dinoGreenMaterial );
+    rightClaw = new THREE.Mesh( clawGeometry, dinoGreenMaterial );
     hip = new THREE.Mesh( hipGeometry, dinoGreenMaterial );
     neck = new THREE.Mesh( neckGeometry, dinoGreenMaterial );
     body = new THREE.Mesh( bodyGeometry, dinoGreenMaterial );
@@ -394,6 +397,8 @@ function initObjects() {
     scene.add( rightEye );
     scene.add( leftArm );
     scene.add( rightArm );
+    scene.add( leftClaw );
+    scene.add( rightClaw );
     scene.add( hip );
     scene.add( neck );
     scene.add( body );
@@ -564,18 +569,33 @@ function mydinoSetMatrices(avars) {
   const ARM_X = BODY_WIDTH/2;
   const ARM_Y = BODY_HEIGHT/8;
   const ARM_Z = -BODY_WIDTH/1.7;
+  const CLAW_ANGLE = Math.PI/2;
+  const CLAW_X = -BODY_WIDTH/4;
+  const CLAW_Y = -BODY_HEIGHT/8;
   // left arm
   leftArm.matrixAutoUpdate = false;
   leftArm.matrix.copy(body.matrix);
   leftArm.matrix.multiply(new THREE.Matrix4().makeTranslation(ARM_X, ARM_Y, -ARM_Z));
   leftArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2));
-  leftArm.updateMatrixWorld
+  leftArm.updateMatrixWorld();
   // right arm
   rightArm.matrixAutoUpdate = false;
   rightArm.matrix.copy(body.matrix);
   rightArm.matrix.multiply(new THREE.Matrix4().makeTranslation(ARM_X, ARM_Y, ARM_Z));
   rightArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2));
   rightArm.updateMatrixWorld();
+  // left claw
+  leftClaw.matrixAutoUpdate = false;
+  leftClaw.matrix.copy(leftArm.matrix);
+  leftClaw.matrix.multiply(new THREE.Matrix4().makeRotationZ(CLAW_ANGLE));
+  leftClaw.matrix.multiply(new THREE.Matrix4().makeTranslation(CLAW_X, CLAW_Y, 0));
+  leftClaw.updateMatrixWorld();
+  // right claw
+  rightClaw.matrixAutoUpdate = false;
+  rightClaw.matrix.copy(rightArm.matrix);
+  rightClaw.matrix.multiply(new THREE.Matrix4().makeRotationZ(CLAW_ANGLE));
+  rightClaw.matrix.multiply(new THREE.Matrix4().makeTranslation(CLAW_X, CLAW_Y, 0));
+  rightClaw.updateMatrixWorld();
 
   hip.matrixAutoUpdate = false;
   hip.matrix.copy(body.matrix);
