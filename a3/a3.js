@@ -44,9 +44,34 @@ var customObject;
 var laserLine;
 var models;
 
+// mydino : dino dino
+const BODY_WIDTH = 1.5;
+const BODY_HEIGHT = 2.5;
+const BODY_DEPTH = 1.5;
+var head;
+var leftEye;
+var rightEye;
+var topMouth;
+var botMouth;
+var neck;
 var body;
+var hip;
+var leftArm;
+var rightArm;
+var leftClaw;
+var rightClaw;
 var leftLeg;
 var rightLeg;
+var leftLeg2;
+var rightLeg2;
+var leftLeg3;
+var rightLeg3;
+var leftFoot;
+var rightFoot;
+var tail1;
+var tail2;
+var tail3;
+var tail4;
 
 var loadingManager = null;
 var RESOURCES_LOADED = false;
@@ -82,7 +107,7 @@ class KFobj {
     this.currTime += dt;
     if (this.currTime > this.maxTime) 
       this.currTime = 0.0;
-  }
+  };
   getAvars() {                  //  compute interpolated values for the current time
     var i = 1;
     while (this.currTime > this.keyFrameArray[i].time)       // find the right pair of keyframes
@@ -119,7 +144,7 @@ console.log('kf 0.1 = ',trexKFobj.getAvars(0.1));    // interpolate for t=0.1
 console.log('kf 2.9 = ',trexKFobj.getAvars(2.9));    // interpolate for t=2.9
 
 // keyframes for mydino:    name, time, [x, y, theta1, theta2]
-const OUTER_ANGLE = 60;
+const OUTER_ANGLE = 20;
 const INNER_ANGLE = 10;
 var mydinoKFobj= new KFobj(mydinoSetMatrices);
 mydinoKFobj.add(new Keyframe('rest pose', 0.0, [8, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
@@ -313,11 +338,25 @@ function initObjects() {
     scene.add( laserLine );
 
     // body
-    bodyGeometry = new THREE.BoxGeometry( 0.25, 0.8, 0.5 );    // width, height, depth
-    legGeometry = new THREE.BoxGeometry( 0.15, 2.0, 0.15 );    // width, height, depth
+    hipGeometry = new THREE.CylinderGeometry( BODY_WIDTH/2, BODY_WIDTH/2, BODY_WIDTH );
+    armGeometry = new THREE.BoxGeometry( BODY_WIDTH/6, BODY_HEIGHT/3, BODY_WIDTH/6 );
+    bodyGeometry = new THREE.BoxGeometry( BODY_WIDTH, BODY_HEIGHT, BODY_DEPTH );    // width, height, depth
+    legGeometry = new THREE.BoxGeometry( 0.75, 1.0, 0.75 );    // width, height, depth
+    headGeometry = new THREE.BoxGeometry( 1.25, 1.25, 1.25 );
+    neckGeometry = new THREE.BoxGeometry( 1, 2, 1 );
+    head = new THREE.Mesh( headGeometry, dinoGreenMaterial );
+    leftArm = new THREE.Mesh( armGeometry, dinoGreenMaterial );
+    rightArm = new THREE.Mesh( armGeometry, dinoGreenMaterial );
+    hip = new THREE.Mesh( hipGeometry, dinoGreenMaterial );
+    neck = new THREE.Mesh( neckGeometry, dinoGreenMaterial );
     body = new THREE.Mesh( bodyGeometry, dinoGreenMaterial );
     leftLeg = new THREE.Mesh( legGeometry, dinoGreenMaterial );
     rightLeg = new THREE.Mesh( legGeometry, dinoGreenMaterial );
+    scene.add( head );
+    scene.add( leftArm );
+    scene.add( rightArm );
+    scene.add( hip );
+    scene.add( neck );
     scene.add( body );
     scene.add( leftLeg );
     scene.add( rightLeg );
@@ -331,11 +370,11 @@ function initFileObjects() {
 
   // Models index
   models = {
-    bunny: { obj:"obj/bunny.obj", mtl: diffuseMaterial, mesh: null },
-    teapot: { obj:"obj/teapot.obj", mtl: diffuseMaterial, mesh: null },
-    armadillo: { obj:"obj/armadillo.obj", mtl: diffuseMaterial, mesh: null },
+    // bunny: { obj:"obj/bunny.obj", mtl: diffuseMaterial, mesh: null },
+    // teapot: { obj:"obj/teapot.obj", mtl: diffuseMaterial, mesh: null },
+    // armadillo: { obj:"obj/armadillo.obj", mtl: diffuseMaterial, mesh: null },
     //  horse: {obj:"obj/horse.obj", mtl: diffuseMaterial, mesh: null },
-    minicooper: { obj:"obj/minicooper.obj", mtl: diffuseMaterial, mesh: null },
+    // minicooper: { obj:"obj/minicooper.obj", mtl: diffuseMaterial, mesh: null },
     trex: { obj:"obj/trex.obj", mtl: normalShaderMaterial, mesh: null },
     //  dragon: {obj:"obj/dragon.obj", mtl: diffuseMaterial, mesh: null }
   };
@@ -468,22 +507,63 @@ function trexSetMatrices(avars) {
 ///////////////////////////////////////////////////////////////////////////////////////
 
 function mydinoSetMatrices(avars) {
+
+  const BODY_CLINE = -Math.PI/6;
   body.matrixAutoUpdate = false;
   body.matrix.identity();                // root of the hierarchy
-  body.matrix.multiply(new THREE.Matrix4().makeTranslation(avars[0], avars[1], 0));    // translate body-center up
-  body.updateMatrixWorld();  
+  body.matrix.multiply(new THREE.Matrix4().makeTranslation(avars[0], avars[1] + 2, 0));    // translate body-center up
+  body.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE));
+  body.updateMatrixWorld();
+
+  // arm common
+  const ARM_X = BODY_WIDTH/2;
+  const ARM_Y = BODY_HEIGHT/8;
+  const ARM_Z = -BODY_WIDTH/1.7;
+  // left arm
+  leftArm.matrixAutoUpdate = false;
+  leftArm.matrix.copy(body.matrix);
+  leftArm.matrix.multiply(new THREE.Matrix4().makeTranslation(ARM_X, ARM_Y, -ARM_Z));
+  leftArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2));
+  leftArm.updateMatrixWorld();
+
+  // right arm
+  rightArm.matrixAutoUpdate = false;
+  rightArm.matrix.copy(body.matrix);
+  rightArm.matrix.multiply(new THREE.Matrix4().makeTranslation(ARM_X, ARM_Y, ARM_Z));
+  rightArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2));
+  rightArm.updateMatrixWorld();
+
+  hip.matrixAutoUpdate = false;
+  hip.matrix.copy(body.matrix);
+  hip.matrix.multiply(new THREE.Matrix4().makeTranslation(0, -BODY_HEIGHT/2, 0));
+  hip.matrix.multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
+  hip.updateMatrixWorld();
+
+  neck.matrixAutoUpdate = false;
+  neck.matrix.copy(body.matrix);
+  neck.matrix.multiply(new THREE.Matrix4().makeTranslation(0.75, 2, 0));
+  neck.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/6));
+  neck.updateMatrixWorld();
+
+  head.matrixAutoUpdate = false;
+  head.matrix.copy(neck.matrix);
+  head.matrix.multiply(new THREE.Matrix4().makeTranslation(-0.25, 1, 0)); // translate to head
+  head.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/3)); // rotate about head
+  head.updateMatrixWorld();
 
   leftLeg.matrixAutoUpdate = false;
-  leftLeg.matrix.copy(body.matrix);      // start with the parent's matrix
-  leftLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0.0, -0.4, -0.125));     // translate to hip
-  leftLeg.matrix.multiply(new THREE.Matrix4().makeRotationZ(avars[2] * Math.PI/180));  // rotate about hip
+  leftLeg.matrix.copy(hip.matrix);      // start with the parent's matrix
+  leftLeg.matrix.multiply(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+  leftLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0, 0, -BODY_WIDTH/3));     // translate to hip
+  leftLeg.matrix.multiply(new THREE.Matrix4().makeRotationZ(-2 * BODY_CLINE + avars[2] * Math.PI/180));  // rotate about hip
   leftLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0, -1, 0));            // translate to center of upper leg
   leftLeg.updateMatrixWorld();
 
   rightLeg.matrixAutoUpdate = false;
-  rightLeg.matrix.copy(body.matrix);     // start with the parent's matrix
-  rightLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0.0, -0.4, 0.125));      // translate to hip
-  rightLeg.matrix.multiply(new THREE.Matrix4().makeRotationZ(avars[3] * Math.PI/180));  // rotate about hip
+  rightLeg.matrix.copy(hip.matrix);     // start with the parent's matrix
+  rightLeg.matrix.multiply(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+  rightLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0, 0, BODY_WIDTH/3));      // translate to hip
+  rightLeg.matrix.multiply(new THREE.Matrix4().makeRotationZ(-2 * BODY_CLINE + avars[3] * Math.PI/180));  // rotate about hip
   rightLeg.matrix.multiply(new THREE.Matrix4().makeTranslation(0, -1, 0));            // translate to center of upper leg
   rightLeg.updateMatrixWorld();
 }
@@ -496,39 +576,39 @@ function onResourcesLoaded() {
 
   // Clone models into meshes;   [Michiel:  AFAIK this makes a "shallow" copy of the model,
   //                             i.e., creates references to the geometry, and not full copies ]
-  meshes["armadillo1"] = models.armadillo.mesh.clone();
-  meshes["bunny1"] = models.bunny.mesh.clone();
-  meshes["teapot1"] = models.teapot.mesh.clone();
-  meshes["minicooper1"] = models.minicooper.mesh.clone();
-  meshes["minicooper2"] = models.minicooper.mesh.clone();
+  // meshes["armadillo1"] = models.armadillo.mesh.clone();
+  // meshes["bunny1"] = models.bunny.mesh.clone();
+  // meshes["teapot1"] = models.teapot.mesh.clone();
+  // meshes["minicooper1"] = models.minicooper.mesh.clone();
+  // meshes["minicooper2"] = models.minicooper.mesh.clone();
   meshes["trex1"] = models.trex.mesh.clone();
   meshes["trex2"] = models.trex.mesh.clone();
 
   // Reposition individual meshes, then add meshes to scene
 
-  meshes["armadillo1"].position.set(-7, 1.5, 2);
-  meshes["armadillo1"].rotation.set(0, -Math.PI/2, 0);
-  meshes["armadillo1"].scale.set(1.5, 1.5, 1.5);
-  scene.add(meshes["armadillo1"]);
+  // meshes["armadillo1"].position.set(-7, 1.5, 2);
+  // meshes["armadillo1"].rotation.set(0, -Math.PI/2, 0);
+  // meshes["armadillo1"].scale.set(1.5, 1.5, 1.5);
+  // scene.add(meshes["armadillo1"]);
 
-  meshes["bunny1"].position.set(-5, 0.2, 8);
-  meshes["bunny1"].rotation.set(0, Math.PI, 0);
-  meshes["bunny1"].scale.set(0.8, 0.8, 0.8);
-  scene.add(meshes["bunny1"]);
+  // meshes["bunny1"].position.set(-5, 0.2, 8);
+  // meshes["bunny1"].rotation.set(0, Math.PI, 0);
+  // meshes["bunny1"].scale.set(0.8, 0.8, 0.8);
+  // scene.add(meshes["bunny1"]);
 
-  meshes["teapot1"].position.set(3, 0, -6);
-  meshes["teapot1"].scale.set(0.5, 0.5, 0.5);
-  scene.add(meshes["teapot1"]);
+  // meshes["teapot1"].position.set(3, 0, -6);
+  // meshes["teapot1"].scale.set(0.5, 0.5, 0.5);
+  // scene.add(meshes["teapot1"]);
 
-  meshes["minicooper1"].position.set(-2, 0, 3);
-  meshes["minicooper1"].scale.set(0.025, 0.025, 0.025);
-  meshes["minicooper1"].rotation.set(-Math.PI/2, 0, Math.PI/2);
-  scene.add(meshes["minicooper1"]);
+  // meshes["minicooper1"].position.set(-2, 0, 3);
+  // meshes["minicooper1"].scale.set(0.025, 0.025, 0.025);
+  // meshes["minicooper1"].rotation.set(-Math.PI/2, 0, Math.PI/2);
+  // scene.add(meshes["minicooper1"]);
 
-  meshes["minicooper2"].position.set(6, 0, 6);
-  meshes["minicooper2"].scale.set(0.025, 0.025, 0.025);
-  meshes["minicooper2"].rotation.set(-Math.PI/2, 0, Math.PI/2);
-  scene.add(meshes["minicooper2"]);
+  // meshes["minicooper2"].position.set(6, 0, 6);
+  // meshes["minicooper2"].scale.set(0.025, 0.025, 0.025);
+  // meshes["minicooper2"].rotation.set(-Math.PI/2, 0, Math.PI/2);
+  // scene.add(meshes["minicooper2"]);
 
   meshes["trex1"].position.set(-4, 1.90, -2);
   meshes["trex1"].scale.set(1.5, 1.5, 1.5);
