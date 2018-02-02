@@ -50,6 +50,7 @@ const BODY_HEIGHT = 2.5;
 const BODY_DEPTH = 1.5;
 const HEAD_SIZE = BODY_WIDTH/1.2;
 var head;
+var eyeCircle;
 var leftEye;
 var rightEye;
 var topMouth;
@@ -61,6 +62,8 @@ var leftArm;
 var rightArm;
 var leftClaw;
 var rightClaw;
+var leftHand;
+var rightHand;
 var leftLeg;
 var rightLeg;
 var leftLeg2;
@@ -69,6 +72,8 @@ var leftLeg3;
 var rightLeg3;
 var leftFoot;
 var rightFoot;
+var leftToe;
+var rightToe;
 var tail1;
 var tail2;
 var tail3;
@@ -172,9 +177,11 @@ var basicMaterial;
 var normalShaderMaterial;
 var dinoMaterial;
 var dinoEyeMaterial;
+var dinoToeMaterial;
 var floorMaterial;
 var shaderFiles;
 
+dinoToeMaterial = new THREE.MeshLambertMaterial( {color:0xffffff} );
 dinoEyeMaterial = new THREE.MeshLambertMaterial( {color:0x000000} );
 dinoGreenMaterial = new THREE.MeshLambertMaterial( {color: 0x4fff4f} );
 laserLineMaterial = new THREE.LineBasicMaterial( {color: 0xff0000} );
@@ -347,17 +354,20 @@ function initObjects() {
     tail3Geometry = new THREE.CylinderGeometry( BODY_WIDTH/5, BODY_WIDTH/6, BODY_WIDTH/2 );
     tail4Geometry = new THREE.CylinderGeometry( BODY_WIDTH/6, BODY_WIDTH/10, BODY_WIDTH/2 );
     tail5Geometry = new THREE.CylinderGeometry( BODY_WIDTH/10, BODY_WIDTH/18, BODY_WIDTH/2 );
-    eyeGeometry = new THREE.SphereGeometry( HEAD_SIZE/8 );
+    eyeCircleGeometry = new THREE.CylinderGeometry( HEAD_SIZE/8, HEAD_SIZE/8, 1.1 * HEAD_SIZE );
+    eyeGeometry = new THREE.SphereGeometry( HEAD_SIZE/10 );
     hipGeometry = new THREE.CylinderGeometry( BODY_WIDTH/2, BODY_WIDTH/2, BODY_WIDTH );
     armGeometry = new THREE.BoxGeometry( BODY_WIDTH/6, BODY_HEIGHT/3, BODY_WIDTH/6 );
     clawGeometry = new THREE.BoxGeometry( BODY_WIDTH/6, BODY_HEIGHT/6, BODY_WIDTH/6 );
+    handGeometry = new THREE.BoxGeometry( BODY_WIDTH/6, BODY_WIDTH/6, BODY_WIDTH/6 );
     bodyGeometry = new THREE.BoxGeometry( BODY_WIDTH, BODY_HEIGHT, BODY_DEPTH );    // width, height, depth
     legGeometry = new THREE.BoxGeometry( BODY_WIDTH/1.8, BODY_WIDTH/1.2, BODY_WIDTH/1.8 );    // width, height, depth
     leg2Geometry = new THREE.BoxGeometry( BODY_WIDTH/2.3, BODY_WIDTH/1.6, BODY_WIDTH/2.3 );
     leg3Geometry = new THREE.BoxGeometry( BODY_WIDTH/2.8, BODY_WIDTH/2, BODY_WIDTH/2.8 );
     footGeometry = new THREE.BoxGeometry( BODY_WIDTH/5.6, BODY_WIDTH/2, BODY_WIDTH/2.8 );
+    toeGeometry = new THREE.BoxGeometry( BODY_WIDTH/5.6, BODY_WIDTH/8, BODY_WIDTH/2.8 );
     headGeometry = new THREE.BoxGeometry( HEAD_SIZE, HEAD_SIZE, HEAD_SIZE );
-    topMouthGeometry = new THREE.BoxGeometry( HEAD_SIZE/2, 1.5 * HEAD_SIZE, HEAD_SIZE );
+    topMouthGeometry = new THREE.BoxGeometry( HEAD_SIZE/3, 1.5 * HEAD_SIZE, HEAD_SIZE );
     botMouthGeometry = new THREE.BoxGeometry( HEAD_SIZE/4, 1.5 * HEAD_SIZE, HEAD_SIZE/1.2 );
     neckGeometry = new THREE.BoxGeometry( 1, 2, 1 );
     tail1 = new THREE.Mesh( tail1Geometry, dinoGreenMaterial );
@@ -365,6 +375,7 @@ function initObjects() {
     tail3 = new THREE.Mesh( tail3Geometry, dinoGreenMaterial );
     tail4 = new THREE.Mesh( tail4Geometry, dinoGreenMaterial );
     tail5 = new THREE.Mesh( tail5Geometry, dinoGreenMaterial );
+    eyeCircle = new THREE.Mesh( eyeCircleGeometry, dinoToeMaterial );
     leftEye = new THREE.Mesh( eyeGeometry, dinoEyeMaterial );
     rightEye = new THREE.Mesh( eyeGeometry, dinoEyeMaterial );
     head = new THREE.Mesh( headGeometry, dinoGreenMaterial );
@@ -374,6 +385,8 @@ function initObjects() {
     rightArm = new THREE.Mesh( armGeometry, dinoGreenMaterial );
     leftClaw = new THREE.Mesh( clawGeometry, dinoGreenMaterial );
     rightClaw = new THREE.Mesh( clawGeometry, dinoGreenMaterial );
+    leftHand = new THREE.Mesh( handGeometry, dinoToeMaterial );
+    rightHand = new THREE.Mesh( handGeometry, dinoToeMaterial );
     hip = new THREE.Mesh( hipGeometry, dinoGreenMaterial );
     neck = new THREE.Mesh( neckGeometry, dinoGreenMaterial );
     body = new THREE.Mesh( bodyGeometry, dinoGreenMaterial );
@@ -385,6 +398,8 @@ function initObjects() {
     rightLeg3 = new THREE.Mesh( leg3Geometry, dinoGreenMaterial );
     leftFoot = new THREE.Mesh( footGeometry, dinoGreenMaterial );
     rightFoot = new THREE.Mesh( footGeometry, dinoGreenMaterial );
+    leftToe = new THREE.Mesh( toeGeometry, dinoToeMaterial );
+    rightToe = new THREE.Mesh( toeGeometry, dinoToeMaterial );
     scene.add( tail1 );
     scene.add( tail2 );
     scene.add( tail3 );
@@ -393,12 +408,15 @@ function initObjects() {
     scene.add( head );
     scene.add( topMouth );
     scene.add( botMouth );
+    scene.add( eyeCircle );
     scene.add( leftEye );
     scene.add( rightEye );
     scene.add( leftArm );
     scene.add( rightArm );
     scene.add( leftClaw );
     scene.add( rightClaw );
+    scene.add( leftHand );
+    scene.add( rightHand );
     scene.add( hip );
     scene.add( neck );
     scene.add( body );
@@ -410,6 +428,8 @@ function initObjects() {
     scene.add( rightLeg3 );
     scene.add( leftFoot );
     scene.add( rightFoot );
+    scene.add( leftToe );
+    scene.add( rightToe );
 }
 
 ////////////////////////////////////////////////////////////////////////  
@@ -596,6 +616,16 @@ function mydinoSetMatrices(avars) {
   rightClaw.matrix.multiply(new THREE.Matrix4().makeRotationZ(CLAW_ANGLE));
   rightClaw.matrix.multiply(new THREE.Matrix4().makeTranslation(CLAW_X, CLAW_Y, 0));
   rightClaw.updateMatrixWorld();
+  // left hand
+  leftHand.matrixAutoUpdate = false;
+  leftHand.matrix.copy(leftClaw.matrix);
+  leftHand.matrix.multiply(new THREE.Matrix4().makeTranslation(0, CLAW_Y, 0));
+  leftHand.updateMatrixWorld();
+  // left hand
+  rightHand.matrixAutoUpdate = false;
+  rightHand.matrix.copy(rightClaw.matrix);
+  rightHand.matrix.multiply(new THREE.Matrix4().makeTranslation(0, CLAW_Y, 0));
+  rightHand.updateMatrixWorld();
 
   hip.matrixAutoUpdate = false;
   hip.matrix.copy(body.matrix);
@@ -663,6 +693,12 @@ function mydinoSetMatrices(avars) {
   const EYE_X = HEAD_SIZE/4;
   const EYE_Y = HEAD_SIZE/4;
   const EYE_Z = HEAD_SIZE/2;
+  eyeCircle.matrixAutoUpdate = false;
+  eyeCircle.matrix.copy(head.matrix);
+  eyeCircle.matrix.multiply(new THREE.Matrix4().makeTranslation(EYE_X, EYE_Y, 0));
+  eyeCircle.matrix.multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
+  eyeCircle.updateMatrixWorld();
+
   leftEye.matrixAutoUpdate = false;
   leftEye.matrix.copy(head.matrix);
   leftEye.matrix.multiply(new THREE.Matrix4().makeTranslation(EYE_X, EYE_Y, -EYE_Z));
@@ -682,6 +718,7 @@ function mydinoSetMatrices(avars) {
   const LEG3_Y = -BODY_WIDTH/2;
   const FOOT_X = -BODY_WIDTH/4;
   const FOOT_Y = -BODY_WIDTH/8;
+  const TOE_Y = -(BODY_WIDTH/4 + BODY_WIDTH/16);
   leftLeg.matrixAutoUpdate = false;
   leftLeg.matrix.copy(hip.matrix);      // start with the parent's matrix
   leftLeg.matrix.multiply(new THREE.Matrix4().makeRotationX(-Math.PI/2));
@@ -708,6 +745,11 @@ function mydinoSetMatrices(avars) {
   leftFoot.matrix.multiply(new THREE.Matrix4().makeTranslation(FOOT_X, FOOT_Y, 0));
   leftFoot.updateMatrixWorld();
 
+  leftToe.matrixAutoUpdate = false;
+  leftToe.matrix.copy(leftFoot.matrix);
+  leftToe.matrix.multiply(new THREE.Matrix4().makeTranslation(0, TOE_Y, 0));
+  leftToe.updateMatrixWorld();
+
   rightLeg.matrixAutoUpdate = false;
   rightLeg.matrix.copy(hip.matrix);     // start with the parent's matrix
   rightLeg.matrix.multiply(new THREE.Matrix4().makeRotationX(-Math.PI/2));
@@ -733,6 +775,11 @@ function mydinoSetMatrices(avars) {
   rightFoot.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/2));
   rightFoot.matrix.multiply(new THREE.Matrix4().makeTranslation(FOOT_X, FOOT_Y, 0));
   rightFoot.updateMatrixWorld();
+
+  rightToe.matrixAutoUpdate = false;
+  rightToe.matrix.copy(rightFoot.matrix);
+  rightToe.matrix.multiply(new THREE.Matrix4().makeTranslation(0, TOE_Y, 0));
+  rightToe.updateMatrixWorld();
 
 }
 
