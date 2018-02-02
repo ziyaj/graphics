@@ -4,6 +4,7 @@
 //  Ziyang Jin
 /////////////////////////////////////////////////////////////////////////////////////////
 
+var backwardsMotion = 1;
 
 // SETUP RENDERER & SCENE
 var canvas = document.getElementById('canvas');
@@ -113,8 +114,11 @@ class KFobj {
   };
   timestep(dt) {                //  take a time-step;  loop to beginning if at end
     this.currTime += dt;
-    if (this.currTime > this.maxTime) 
+    if (this.currTime > this.maxTime) {
       this.currTime = 0.0;
+    } else if (this.currTime <= 0.0) {
+      this.currTime = this.maxTime;
+    }
   };
   getAvars() {                  //  compute interpolated values for the current time
     var i = 1;
@@ -524,6 +528,11 @@ function checkKeyboard() {
   } else if (keyboard.pressed("p")) {
     camera.fov -= 0.5;
     camera.updateProjectionMatrix();  // get three.js to recompute  M_proj
+  } else if (keyboard.pressed("l")) {
+    laserLine.visible = !laserLine.visible;
+  } else if (keyboard.pressed("b")) {
+    // play the motion backwards in time
+    backwardsMotion = - backwardsMotion;
   }
 }
 
@@ -542,10 +551,11 @@ function update() {
   /////////// animated objects ////////////////
 
   if (animation) {       //   update the current time of objects if  animation = true
-    trexKFobj.timestep(0.02);               // the big dino
-    mydinoKFobj.timestep(0.02);             // the blocky walking figure, your hierarchy
-    minicooperKFobj.timestep(0.02);
-    aniTime += 0.02;                        // update global time
+    const sec = backwardsMotion * 0.02;
+    trexKFobj.timestep(sec);               // the big dino
+    mydinoKFobj.timestep(sec);             // the blocky walking figure, your hierarchy
+    minicooperKFobj.timestep(sec);
+    aniTime += sec;                        // update global time
   }
 
   var trexAvars = trexKFobj.getAvars();       // interpolate avars
@@ -573,13 +583,19 @@ function laserUpdate() {
   var trex2 = meshes["trex2"];                                   //   reference to the Object
   var trexEyeWorld = trexEyeLocal.applyMatrix4(trex2.matrix);    // this computes  trex2.matrix * trexEyeLocal (with h=1)
 
-  var mydinoWorld = new THREE.Vector3(10, 0, 3);
+  var cooperLocal = new THREE.Vector3(30, 0, 0);
+  var cooper1 = meshes["minicooper1"];
+  var cooperWorld = cooperLocal.applyMatrix4(cooper1.matrix);
+
+  var mydinoLocal = new THREE.Vector3(-1, 0, 0);
+  var mydino = body;
+  var mydinoWorld = mydinoLocal.applyMatrix4(body.matrix);
 
   var offset = [ new THREE.Vector3(0,0,0), new THREE.Vector3(0.02,0,0), new THREE.Vector3(0,0.02,0) ];
   for (var n = 0; n < 3; n++) {            // laserLine consists of three line segements, slightly offset (more visible)
-    laserLine.geometry.vertices[n*2].x = trexEyeWorld.x + offset[n].x;
-    laserLine.geometry.vertices[n*2].y = trexEyeWorld.y + offset[n].y;
-    laserLine.geometry.vertices[n*2].z = trexEyeWorld.z + offset[n].z;
+    laserLine.geometry.vertices[n*2].x = cooperWorld.x + offset[n].x;
+    laserLine.geometry.vertices[n*2].y = cooperWorld.y + offset[n].y;
+    laserLine.geometry.vertices[n*2].z = cooperWorld.z + offset[n].z;
 
     laserLine.geometry.vertices[n*2+1].x = mydinoWorld.x + offset[n].x;
     laserLine.geometry.vertices[n*2+1].y = mydinoWorld.y + offset[n].y;
