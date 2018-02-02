@@ -189,6 +189,21 @@ minicooperKFobj.add(new Keyframe('rest pose', 5.0, [9*DIV, 1,   -INNER_ANGLE, IN
 minicooperKFobj.add(new Keyframe('rest pose', 5.5, [10*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
 minicooperKFobj.add(new Keyframe('rest pose', 6.0, [11*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
 
+var mytrexKFobj = new KFobj(mytrexSetMatrices);
+mytrexKFobj.add(new Keyframe('rest pose', 0.0, [-3*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 0.5, [-2*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 1.0, [-1*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 1.5, [0*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 2.0, [1*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 2.5, [2*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 3.0, [3*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 3.5, [4*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 4.0, [5*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 4.5, [6*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 5.0, [7*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 5.5, [8*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 6.0, [9*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+
 // optional:   allow avar indexing by name
 // i.e., instead of   avar[1]    one can also use:    avar[ trexIndex["y"]]  
 var trexIndex = {"x":0, "y":1, "z":2};   Object.freeze(trexIndex);
@@ -522,6 +537,7 @@ function checkKeyboard() {
     trexKFobj.reset();
     mydinoKFobj.reset();
     minicooperKFobj.reset();
+    mytrexKFobj.reset();
   } else if (keyboard.pressed("o")) {
     camera.fov += 0.5;
     camera.updateProjectionMatrix();  // get three.js to recopute   M_proj
@@ -555,6 +571,7 @@ function update() {
     trexKFobj.timestep(sec);               // the big dino
     mydinoKFobj.timestep(sec);             // the blocky walking figure, your hierarchy
     minicooperKFobj.timestep(sec);
+    mytrexKFobj.timestep(sec);
     aniTime += sec;                        // update global time
   }
 
@@ -566,6 +583,9 @@ function update() {
 
   var myCooperAvars = minicooperKFobj.getAvars();
   minicooperKFobj.setMatricesFunc(myCooperAvars);
+
+  var mytrexAvars = mytrexKFobj.getAvars();
+  mytrexKFobj.setMatricesFunc(mytrexAvars);
 
   laserUpdate();
 
@@ -627,15 +647,25 @@ function myCooperSetMatrices(avars) {
     const cooper = meshes["minicooper1"];
     const RADIUS = 6.8;
 
-    //meshes["minicooper1"].scale.set(0.025, 0.025, 0.025);
-    //meshes["minicooper1"].rotation.set(-Math.PI/2, 0, Math.PI/2);
     cooper.matrixAutoUpdate = false;
     cooper.matrix.identity();
     cooper.matrix.multiply(new THREE.Matrix4().makeTranslation(RADIUS * Math.cos(avars[0]), 0, RADIUS * Math.sin(avars[0])));
-    cooper.matrix.multiply(new THREE.Matrix4().makeScale(0.025, 0.025, 0.025));
     cooper.matrix.multiply(new THREE.Matrix4().makeRotationY(-avars[0]));
     cooper.matrix.multiply(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+    cooper.matrix.multiply(new THREE.Matrix4().makeScale(0.025, 0.025, 0.025));
     cooper.updateMatrixWorld();
+}
+
+function mytrexSetMatrices(avars) {
+    const trex1 = meshes["trex1"];
+    const RADIUS = 6.8;
+
+    trex1.matrixAutoUpdate = false;
+    trex1.matrix.identity();
+    trex1.matrix.multiply(new THREE.Matrix4().makeTranslation(RADIUS * Math.cos(avars[0]), 2, RADIUS * Math.sin(avars[0])));
+    trex1.matrix.multiply(new THREE.Matrix4().makeRotationY(-avars[0] + Math.PI));
+    trex1.matrix.multiply(new THREE.Matrix4().makeScale(1.5, 1.5, 1.5));
+    trex1.updateMatrixWorld();    
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -648,7 +678,7 @@ function mydinoSetMatrices(avars) {
   const RADIUS = 7;
   body.matrixAutoUpdate = false;
   body.matrix.identity();                // root of the hierarchy
-  body.matrix.multiply(new THREE.Matrix4().makeTranslation(RADIUS * Math.cos(avars[0]), avars[1] + 2.5, RADIUS * Math.sin(avars[0])));    // translate body-center up
+  body.matrix.multiply(new THREE.Matrix4().makeTranslation(RADIUS * Math.cos(avars[0]), avars[1] + 2.6, RADIUS * Math.sin(avars[0])));    // translate body-center up
   body.matrix.multiply(new THREE.Matrix4().makeRotationY(-avars[0] + 3*Math.PI/2));
   body.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE));
   body.updateMatrixWorld();
@@ -664,13 +694,13 @@ function mydinoSetMatrices(avars) {
   leftArm.matrixAutoUpdate = false;
   leftArm.matrix.copy(body.matrix);
   leftArm.matrix.multiply(new THREE.Matrix4().makeTranslation(ARM_X, ARM_Y, -ARM_Z));
-  leftArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2 + avars[2] * Math.PI/180));
+  leftArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2 + avars[2] * Math.PI/90));
   leftArm.updateMatrixWorld();
   // right arm
   rightArm.matrixAutoUpdate = false;
   rightArm.matrix.copy(body.matrix);
   rightArm.matrix.multiply(new THREE.Matrix4().makeTranslation(ARM_X, ARM_Y, ARM_Z));
-  rightArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2 + avars[3] * Math.PI/180));
+  rightArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2 + avars[3] * Math.PI/90));
   rightArm.updateMatrixWorld();
   // left claw
   leftClaw.matrixAutoUpdate = false;
@@ -705,35 +735,35 @@ function mydinoSetMatrices(avars) {
   tail1.matrix.copy(hip.matrix);
   tail1.matrix.multiply(new THREE.Matrix4().makeRotationX(-Math.PI/2));
   tail1.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/250));
-  tail1.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/4));
+  tail1.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/3 + avars[2] * Math.PI/360));
   tail1.matrix.multiply(new THREE.Matrix4().makeTranslation(0, -BODY_HEIGHT/3, 0));
   tail1.updateMatrixWorld();
 
   tail2.matrixAutoUpdate = false;
   tail2.matrix.copy(tail1.matrix);
-  tail2.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/5));
   tail2.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/200));
+  tail2.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/5 + avars[2] * Math.PI/300));
   tail2.matrix.multiply(new THREE.Matrix4().makeTranslation(-BODY_HEIGHT/7, -BODY_HEIGHT/3.5, 0));
   tail2.updateMatrixWorld();
 
   tail3.matrixAutoUpdate = false;
   tail3.matrix.copy(tail2.matrix);
-  tail3.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/10));
   tail3.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/150));
+  //tail3.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/10 + avars[2] * Math.PI/360));
   tail3.matrix.multiply(new THREE.Matrix4().makeTranslation(-BODY_HEIGHT/20, -BODY_HEIGHT/4, 0));
   tail3.updateMatrixWorld();
 
   tail4.matrixAutoUpdate = false;
   tail4.matrix.copy(tail3.matrix);
-  tail4.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/10));
   tail4.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/100));
+  //tail4.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/10 + avars[2] * Math.PI/360));
   tail4.matrix.multiply(new THREE.Matrix4().makeTranslation(BODY_HEIGHT/30, -BODY_HEIGHT/4, 0));
   tail4.updateMatrixWorld();
 
   tail5.matrixAutoUpdate = false;
   tail5.matrix.copy(tail4.matrix);
-  tail5.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/10));
   tail5.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/50));
+  //tail5.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/10 + avars[2] * Math.PI/360));
   tail5.matrix.multiply(new THREE.Matrix4().makeTranslation(BODY_HEIGHT/30, -BODY_HEIGHT/4, 0));
   tail5.updateMatrixWorld();
 
@@ -748,6 +778,7 @@ function mydinoSetMatrices(avars) {
   head.matrix.copy(neck.matrix);
   head.matrix.multiply(new THREE.Matrix4().makeTranslation(-BODY_WIDTH/8, 1, 0)); // translate to head
   head.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/3)); // rotate about head
+  head.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/120));
   head.updateMatrixWorld();
 
   topMouth.matrixAutoUpdate = false;
