@@ -369,7 +369,7 @@ function initObjects() {
     footGeometry = new THREE.BoxGeometry( BODY_WIDTH/5.6, BODY_WIDTH/2, BODY_WIDTH/2.8 );
     toeGeometry = new THREE.BoxGeometry( BODY_WIDTH/5.6, BODY_WIDTH/8, BODY_WIDTH/2.8 );
     headGeometry = new THREE.BoxGeometry( HEAD_SIZE, HEAD_SIZE, HEAD_SIZE );
-    topMouthGeometry = new THREE.BoxGeometry( HEAD_SIZE/3, 1.5 * HEAD_SIZE, HEAD_SIZE );
+    topMouthGeometry = new THREE.BoxGeometry( HEAD_SIZE/3, 1.5 * HEAD_SIZE, HEAD_SIZE/1.1 );
     botMouthGeometry = new THREE.BoxGeometry( HEAD_SIZE/4, 1.5 * HEAD_SIZE, HEAD_SIZE/1.2 );
     tongueGeometry = new THREE.BoxGeometry( HEAD_SIZE/15, 1.4 * HEAD_SIZE, HEAD_SIZE/2 );
     neckGeometry = new THREE.BoxGeometry( 1, 2, 1 );
@@ -601,13 +601,13 @@ function mydinoSetMatrices(avars) {
   leftArm.matrixAutoUpdate = false;
   leftArm.matrix.copy(body.matrix);
   leftArm.matrix.multiply(new THREE.Matrix4().makeTranslation(ARM_X, ARM_Y, -ARM_Z));
-  leftArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2));
+  leftArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2 + avars[2] * Math.PI/180));
   leftArm.updateMatrixWorld();
   // right arm
   rightArm.matrixAutoUpdate = false;
   rightArm.matrix.copy(body.matrix);
   rightArm.matrix.multiply(new THREE.Matrix4().makeTranslation(ARM_X, ARM_Y, ARM_Z));
-  rightArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2));
+  rightArm.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE + Math.PI/2 + avars[3] * Math.PI/180));
   rightArm.updateMatrixWorld();
   // left claw
   leftClaw.matrixAutoUpdate = false;
@@ -641,6 +641,7 @@ function mydinoSetMatrices(avars) {
   tail1.matrixAutoUpdate = false;
   tail1.matrix.copy(hip.matrix);
   tail1.matrix.multiply(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+  tail1.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/360));
   tail1.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/4));
   tail1.matrix.multiply(new THREE.Matrix4().makeTranslation(0, -BODY_HEIGHT/3, 0));
   tail1.updateMatrixWorld();
@@ -648,24 +649,28 @@ function mydinoSetMatrices(avars) {
   tail2.matrixAutoUpdate = false;
   tail2.matrix.copy(tail1.matrix);
   tail2.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/5));
+  tail2.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/300));
   tail2.matrix.multiply(new THREE.Matrix4().makeTranslation(-BODY_HEIGHT/7, -BODY_HEIGHT/3.5, 0));
   tail2.updateMatrixWorld();
 
   tail3.matrixAutoUpdate = false;
   tail3.matrix.copy(tail2.matrix);
   tail3.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/10));
+  tail3.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/240));
   tail3.matrix.multiply(new THREE.Matrix4().makeTranslation(-BODY_HEIGHT/20, -BODY_HEIGHT/4, 0));
   tail3.updateMatrixWorld();
 
   tail4.matrixAutoUpdate = false;
   tail4.matrix.copy(tail3.matrix);
   tail4.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/10));
+  tail4.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/180));
   tail4.matrix.multiply(new THREE.Matrix4().makeTranslation(BODY_HEIGHT/30, -BODY_HEIGHT/4, 0));
   tail4.updateMatrixWorld();
 
   tail5.matrixAutoUpdate = false;
   tail5.matrix.copy(tail4.matrix);
   tail5.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/10));
+  tail5.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/120));
   tail5.matrix.multiply(new THREE.Matrix4().makeTranslation(BODY_HEIGHT/30, -BODY_HEIGHT/4, 0));
   tail5.updateMatrixWorld();
 
@@ -690,13 +695,13 @@ function mydinoSetMatrices(avars) {
 
   botMouth.matrixAutoUpdate = false;
   botMouth.matrix.copy(head.matrix);
-  botMouth.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/1.5));
+  botMouth.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/1.5 + avars[2] * Math.PI/360));
   botMouth.matrix.multiply(new THREE.Matrix4().makeTranslation(0, HEAD_SIZE/2, 0));
   botMouth.updateMatrixWorld();
 
   tongue.matrixAutoUpdate = false;
   tongue.matrix.copy(head.matrix);
-  tongue.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/1.7));
+  tongue.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/1.7 + avars[2] * Math.PI/360));
   tongue.matrix.multiply(new THREE.Matrix4().makeTranslation(0, HEAD_SIZE/2, 0));
   tongue.updateMatrixWorld();
 
