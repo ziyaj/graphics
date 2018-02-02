@@ -55,6 +55,7 @@ var leftEye;
 var rightEye;
 var topMouth;
 var botMouth;
+var tongue;
 var neck;
 var body;
 var hip;
@@ -181,8 +182,9 @@ var dinoToeMaterial;
 var floorMaterial;
 var shaderFiles;
 
-dinoToeMaterial = new THREE.MeshLambertMaterial( {color:0xffffff} );
-dinoEyeMaterial = new THREE.MeshLambertMaterial( {color:0x000000} );
+dinoTongueMaterial = new THREE.MeshLambertMaterial( {color: 0xff0000} );
+dinoToeMaterial = new THREE.MeshLambertMaterial( {color: 0xffffff} );
+dinoEyeMaterial = new THREE.MeshLambertMaterial( {color: 0x000000} );
 dinoGreenMaterial = new THREE.MeshLambertMaterial( {color: 0x4fff4f} );
 laserLineMaterial = new THREE.LineBasicMaterial( {color: 0xff0000} );
 diffuseMaterial = new THREE.MeshLambertMaterial( {color: 0x7f7fff} );
@@ -369,6 +371,7 @@ function initObjects() {
     headGeometry = new THREE.BoxGeometry( HEAD_SIZE, HEAD_SIZE, HEAD_SIZE );
     topMouthGeometry = new THREE.BoxGeometry( HEAD_SIZE/3, 1.5 * HEAD_SIZE, HEAD_SIZE );
     botMouthGeometry = new THREE.BoxGeometry( HEAD_SIZE/4, 1.5 * HEAD_SIZE, HEAD_SIZE/1.2 );
+    tongueGeometry = new THREE.BoxGeometry( HEAD_SIZE/15, 1.4 * HEAD_SIZE, HEAD_SIZE/2 );
     neckGeometry = new THREE.BoxGeometry( 1, 2, 1 );
     tail1 = new THREE.Mesh( tail1Geometry, dinoGreenMaterial );
     tail2 = new THREE.Mesh( tail2Geometry, dinoGreenMaterial );
@@ -381,6 +384,7 @@ function initObjects() {
     head = new THREE.Mesh( headGeometry, dinoGreenMaterial );
     topMouth = new THREE.Mesh( topMouthGeometry, dinoGreenMaterial );
     botMouth = new THREE.Mesh( botMouthGeometry, dinoGreenMaterial );
+    tongue = new THREE.Mesh( tongueGeometry, dinoTongueMaterial );
     leftArm = new THREE.Mesh( armGeometry, dinoGreenMaterial );
     rightArm = new THREE.Mesh( armGeometry, dinoGreenMaterial );
     leftClaw = new THREE.Mesh( clawGeometry, dinoGreenMaterial );
@@ -408,6 +412,7 @@ function initObjects() {
     scene.add( head );
     scene.add( topMouth );
     scene.add( botMouth );
+    scene.add( tongue );
     scene.add( eyeCircle );
     scene.add( leftEye );
     scene.add( rightEye );
@@ -688,6 +693,12 @@ function mydinoSetMatrices(avars) {
   botMouth.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/1.5));
   botMouth.matrix.multiply(new THREE.Matrix4().makeTranslation(0, HEAD_SIZE/2, 0));
   botMouth.updateMatrixWorld();
+
+  tongue.matrixAutoUpdate = false;
+  tongue.matrix.copy(head.matrix);
+  tongue.matrix.multiply(new THREE.Matrix4().makeRotationZ(-Math.PI/1.7));
+  tongue.matrix.multiply(new THREE.Matrix4().makeTranslation(0, HEAD_SIZE/2, 0));
+  tongue.updateMatrixWorld();
 
   // eyes
   const EYE_X = HEAD_SIZE/4;
