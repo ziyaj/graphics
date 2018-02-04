@@ -158,7 +158,7 @@ console.log('kf 2.9 = ',trexKFobj.getAvars(2.9));    // interpolate for t=2.9
 // keyframes for mydino:    name, time, [x, y, theta1, theta2]
 const OUTER_ANGLE = 20;
 const INNER_ANGLE = 10;
-const DIV = 2 * Math.PI / 12;
+const DIV = 2 * Math.PI / 24;
 var mydinoKFobj = new KFobj(mydinoSetMatrices);
 mydinoKFobj.add(new Keyframe('rest pose', 0.0, [1*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
 mydinoKFobj.add(new Keyframe('rest pose', 0.5, [2*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
@@ -173,36 +173,72 @@ mydinoKFobj.add(new Keyframe('rest pose', 4.5, [10*DIV, 1,   -OUTER_ANGLE, OUTER
 mydinoKFobj.add(new Keyframe('rest pose', 5.0, [11*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
 mydinoKFobj.add(new Keyframe('rest pose', 5.5, [12*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
 mydinoKFobj.add(new Keyframe('rest pose', 6.0, [13*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 6.5, [14*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 7.0, [15*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 7.5, [16*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 8.0, [17*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 8.5, [18*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 9.0, [19*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 9.5, [20*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 10.0, [21*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 10.5, [22*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 11.0, [23*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 11.5, [24*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+mydinoKFobj.add(new Keyframe('rest pose', 12.0, [25*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
 
 var minicooperKFobj = new KFobj(myCooperSetMatrices);
-minicooperKFobj.add(new Keyframe('rest pose', 0.0, [-DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 0.5, [0, 1.8, INNER_ANGLE, -INNER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 1.0, [1*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 1.5, [2*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 2.0, [3*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 2.5, [4*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 3.0, [5*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 3.5, [6*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 4.0, [7*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 4.5, [8*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 5.0, [9*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 5.5, [10*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
-minicooperKFobj.add(new Keyframe('rest pose', 6.0, [11*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 0.0, [-3*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 0.5, [-2*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 1.0, [-1*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 1.5, [0*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 2.0, [1*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 2.5, [2*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 3.0, [3*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 3.5, [4*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 4.0, [5*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 4.5, [6*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 5.0, [7*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 5.5, [8*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 6.0, [9*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 6.5, [10*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 7.0, [11*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 7.5, [12*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 8.0, [13*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 8.5, [14*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 9.0, [15*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 9.5, [16*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 10.0, [17*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 10.5, [18*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 11.0, [19*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 11.5, [20*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+minicooperKFobj.add(new Keyframe('rest pose', 12.0, [21*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
 
 var mytrexKFobj = new KFobj(mytrexSetMatrices);
-mytrexKFobj.add(new Keyframe('rest pose', 0.0, [-3*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 0.5, [-2*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 1.0, [-1*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 1.5, [0*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 2.0, [1*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 2.5, [2*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 3.0, [3*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 3.5, [4*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 4.0, [5*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 4.5, [6*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 5.0, [7*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 5.5, [8*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
-mytrexKFobj.add(new Keyframe('rest pose', 6.0, [9*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 0.0, [-7*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 0.5, [-6*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 1.0, [-5*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 1.5, [-4*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 2.0, [-3*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 2.5, [-2*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 3.0, [-1*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 3.5, [0*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 4.0, [1*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 4.5, [2*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 5.0, [3*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 5.5, [4*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 6.0, [5*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 6.5, [6*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 7.0, [7*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 7.5, [8*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 8.0, [9*DIV, 1.8, -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 8.5, [10*DIV, 1.8, INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 9.0, [11*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 9.5, [12*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 10.0, [13*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 10.5, [14*DIV, 1,   -OUTER_ANGLE, OUTER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 11.0, [15*DIV, 1,   -INNER_ANGLE, INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 11.5, [16*DIV, 1,   INNER_ANGLE, -INNER_ANGLE]));
+mytrexKFobj.add(new Keyframe('rest pose', 12.0, [17*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
 
 // optional:   allow avar indexing by name
 // i.e., instead of   avar[1]    one can also use:    avar[ trexIndex["y"]]  
@@ -235,7 +271,7 @@ basicMaterial = new THREE.MeshBasicMaterial( {color: 0xff0000} );
 
 floorTexture = new THREE.ImageUtils.loadTexture('images/floor.jpg');
 floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-floorTexture.repeat.set(1, 1);
+floorTexture.repeat.set(2,2);
 floorMaterial = new THREE.MeshBasicMaterial({ map: floorTexture, side: THREE.DoubleSide });
 
 // CUSTOM SHADERS
@@ -292,7 +328,7 @@ function initLights() {
     light = new THREE.PointLight(0xffffff);
     light.position.set(0, 4, 20);
     scene.add(light);
-    ambientLight = new THREE.AmbientLight(0x606060);
+    ambientLight = new THREE.AmbientLight(0x000000);
     scene.add(ambientLight);
 };
 
@@ -634,7 +670,7 @@ function trexSetMatrices(avars) {
 
   trex2.matrixAutoUpdate = false;     // tell three.js not to over-write our updates
   trex2.matrix.identity();              
-  trex2.matrix.multiply(new THREE.Matrix4().makeTranslation(avars[0], avars[1], avars[2]));  
+  trex2.matrix.multiply(new THREE.Matrix4().makeTranslation(avars[0] - 14, avars[1], avars[2]));  
   trex2.matrix.multiply(new THREE.Matrix4().makeRotationY(-Math.PI/2));
   trex2.matrix.multiply(new THREE.Matrix4().makeScale(1.5, 1.5, 1.5));
   trex2.updateMatrixWorld();
@@ -678,7 +714,7 @@ function mydinoSetMatrices(avars) {
   const RADIUS = 7;
   body.matrixAutoUpdate = false;
   body.matrix.identity();                // root of the hierarchy
-  body.matrix.multiply(new THREE.Matrix4().makeTranslation(RADIUS * Math.cos(avars[0]), avars[1] + 2.6, RADIUS * Math.sin(avars[0])));    // translate body-center up
+  body.matrix.multiply(new THREE.Matrix4().makeTranslation(RADIUS * Math.cos(avars[0]), avars[1] + 2.7, RADIUS * Math.sin(avars[0])));    // translate body-center up
   body.matrix.multiply(new THREE.Matrix4().makeRotationY(-avars[0] + 3*Math.PI/2));
   body.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE));
   body.updateMatrixWorld();
@@ -851,7 +887,7 @@ function mydinoSetMatrices(avars) {
 
   leftFoot.matrixAutoUpdate = false;
   leftFoot.matrix.copy(leftLeg3.matrix);
-  leftFoot.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/2));
+  leftFoot.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/2 - avars[2] * Math.PI/180));
   leftFoot.matrix.multiply(new THREE.Matrix4().makeTranslation(FOOT_X, FOOT_Y, 0));
   leftFoot.updateMatrixWorld();
 
@@ -882,7 +918,7 @@ function mydinoSetMatrices(avars) {
 
   rightFoot.matrixAutoUpdate = false;
   rightFoot.matrix.copy(rightLeg3.matrix);
-  rightFoot.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/2));
+  rightFoot.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/2 + avars[2] * Math.PI/180));
   rightFoot.matrix.multiply(new THREE.Matrix4().makeTranslation(FOOT_X, FOOT_Y, 0));
   rightFoot.updateMatrixWorld();
 
