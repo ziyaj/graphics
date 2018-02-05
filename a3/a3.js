@@ -7,6 +7,17 @@
 var backwardsMotion = 1;
 
 
+// SETUP BACKGROUND IMAGE
+var backgroundTexture = new THREE.ImageUtils.loadTexture('images/galaxy.jpg');
+var backgroundMesh = new THREE.Mesh( new THREE.PlaneGeometry(2, 2, 0),
+    new THREE.MeshBasicMaterial({ map: backgroundTexture }));
+backgroundMesh.material.depthTest = false;
+backgroundMesh.material.depthWrite = false;
+var backgroundScene = new THREE.Scene();
+var backgroundCamera = new THREE.Camera();
+backgroundScene.add( backgroundCamera );
+backgroundScene.add( backgroundMesh );
+
 // SETUP RENDERER & SCENE
 var canvas = document.getElementById('canvas');
 var scene = new THREE.Scene();
@@ -627,6 +638,9 @@ function update() {
   laserUpdate();
 
   requestAnimationFrame(update);
+  renderer.autoClear = false;
+  renderer.clear();
+  renderer.render( backgroundScene, backgroundCamera );
   renderer.render(scene, camera);
 }
 
