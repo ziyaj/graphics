@@ -23,7 +23,7 @@ var canvas = document.getElementById('canvas');
 var scene = new THREE.Scene();
 var renderer = new THREE.WebGLRenderer();
 var camera;
-var cameraFov = 30;     // initial camera vertical field of view, in degrees
+var cameraFov = 60;     // initial camera vertical field of view, in degrees
 
 renderer.setClearColor(0x000000); // set background colour
 canvas.appendChild(renderer.domElement);
@@ -61,6 +61,11 @@ var cone;
 var customObject;
 var laserLine;
 var models;
+
+// head phone 
+var headPhone1; // flat box
+var headPhone2; // cylinder
+var headPhone3; // smaller cylinder
 
 // mydino : dino dino
 const BODY_WIDTH = 1.5;
@@ -277,6 +282,7 @@ var floorMaterial;
 var shaderFiles;
 
 
+headPhone1Material = new THREE.MeshLambertMaterial( {color:0xc0c0c0} );
 ballMaterial = new THREE.MeshLambertMaterial( {color: 0xff4500} );
 dinoTongueMaterial = new THREE.MeshLambertMaterial( {color: 0xff0000} );
 dinoToeMaterial = new THREE.MeshLambertMaterial( {color: 0xffffff} );
@@ -328,7 +334,7 @@ function initCamera() {
     camera = new THREE.PerspectiveCamera(cameraFov, 1, 0.1, 1000); // view angle, aspect ratio, near, far
 
     // set up M_view:   (internally:  camera.matrixWorldInverse )
-    camera.position.set(0, 12, 20);
+    camera.position.set(0, 20, 30);
     camera.up = new THREE.Vector3(0, 1, 0);
     camera.lookAt(0, 0, 0);
     scene.add(camera);
@@ -345,8 +351,24 @@ function initCamera() {
 
 function initLights() {
     light = new THREE.PointLight(0xffffff);
-    light.position.set(0, 15, 10);
+    light.position.set(0, 15, 0);
     scene.add(light);
+
+    light2 = new THREE.PointLight(0xffffff);
+    light2.position.set(0, 5, 20);
+    scene.add(light2);
+
+    light3 = new THREE.PointLight(0xffffff);
+    light3.position.set(0, 5, -20);
+    scene.add(light3);
+
+    light4 = new THREE.PointLight(0xffffff);
+    light4.position.set(20, 5, 0);
+    scene.add(light4);
+
+    light5 = new THREE.PointLight(0xffffff);
+    light5.position.set(-20, 5, 0);
+    scene.add(light5);
 
     ambientLight = new THREE.AmbientLight(0x000000);
     scene.add(ambientLight);
@@ -447,6 +469,11 @@ function initObjects() {
     laserLine = new THREE.Line( geom, laserLineMaterial );
     scene.add( laserLine );
 
+    // head phone
+    headPhone1Geometry = new THREE.BoxGeometry( 0.2 * HEAD_SIZE, 0.4 * HEAD_SIZE, HEAD_SIZE + 0.2);
+    headPhone2Geometry = new THREE.CylinderGeometry( 0.25 * HEAD_SIZE, 0.25 * HEAD_SIZE, HEAD_SIZE + 0.3 );
+    headPhone3Geometry = new THREE.CylinderGeometry( 0.16 * HEAD_SIZE, 0.16 * HEAD_SIZE, HEAD_SIZE + 0.5 );
+
     // body
     ballGeometry = new THREE.SphereGeometry( 0.1 );
     tail1Geometry = new THREE.CylinderGeometry( BODY_WIDTH/3, BODY_WIDTH/4, BODY_WIDTH );
@@ -508,6 +535,9 @@ function initObjects() {
     volcanoBase.position.set(0, 3, 0);
     volcanoTop = new THREE.Mesh( volcanoTopGeometry, ballMaterial );
     volcanoTop.position.set(0, 3.3, 0);
+    headPhone1 = new THREE.Mesh( headPhone1Geometry, headPhone1Material );
+    headPhone2 = new THREE.Mesh( headPhone2Geometry, headPhone1Material );
+    headPhone3 = new THREE.Mesh( headPhone3Geometry, dinoEyeMaterial );
     scene.add( tail1 );
     scene.add( tail2 );
     scene.add( tail3 );
@@ -541,6 +571,9 @@ function initObjects() {
     scene.add( rightToe );
     scene.add( volcanoBase );
     scene.add( volcanoTop );
+    scene.add( headPhone1 );
+    scene.add( headPhone2 );
+    scene.add( headPhone3 );
 }
 
 ////////////////////////////////////////////////////////////////////////  
@@ -894,6 +927,24 @@ function mydinoSetMatrices(avars) {
   head.matrix.multiply(new THREE.Matrix4().makeRotationZ(Math.PI/3)); // rotate about head
   head.matrix.multiply(new THREE.Matrix4().makeRotationY(avars[2] * Math.PI/120));
   head.updateMatrixWorld();
+
+  // head phone
+  headPhone1.matrixAutoUpdate = false;
+  headPhone1.matrix.copy(head.matrix);
+  headPhone1.matrix.multiply(new THREE.Matrix4().makeTranslation(-0.3, 0.5, 0));
+  headPhone1.updateMatrixWorld();
+
+  headPhone2.matrixAutoUpdate = false;
+  headPhone2.matrix.copy(head.matrix);
+  headPhone2.matrix.multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
+  headPhone2.matrix.multiply(new THREE.Matrix4().makeTranslation(-0.3, 0, -0.1));
+  headPhone2.updateMatrixWorld();
+
+  headPhone3.matrixAutoUpdate = false;
+  headPhone3.matrix.copy(head.matrix);
+  headPhone3.matrix.multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
+  headPhone3.matrix.multiply(new THREE.Matrix4().makeTranslation(-0.3, 0, -0.1));
+  headPhone3.updateMatrixWorld();
 
   topMouth.matrixAutoUpdate = false;
   topMouth.matrix.copy(head.matrix);
