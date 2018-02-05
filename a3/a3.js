@@ -483,7 +483,7 @@ function initObjects() {
 
     // meteoroid;
     meteoroidGeometry = new THREE.SphereGeometry( 1 );
-    meteoTailGeometry = new THREE.CylinderGeometry( 0.6, 0, 4 );
+    meteoTailGeometry = new THREE.CylinderGeometry( 0.8, 0, 5 );
 
     // body
     ballGeometry = new THREE.SphereGeometry( 0.1 );
@@ -549,7 +549,6 @@ function initObjects() {
     meteoroid = new THREE.Mesh( meteoroidGeometry, new THREE.MeshBasicMaterial({ map: meteoTexture }) );
     meteoroid.position.set(10, 14, -35);
     meteoroidTail = new THREE.Mesh( meteoTailGeometry, dinoToeMaterial );
-    meteoroidTail.rotateZ(Math.PI/2);
     headPhone1 = new THREE.Mesh( headPhone1Geometry, headPhone1Material );
     headPhone2 = new THREE.Mesh( headPhone2Geometry, headPhone1Material );
     headPhone3 = new THREE.Mesh( headPhone3Geometry, dinoEyeMaterial );
@@ -593,7 +592,7 @@ function initObjects() {
     scene.add( meteoroidTail );
     THREE.SceneUtils.attach( meteoroidTail, scene, meteoroid );
     meteoroidTail.rotateZ(Math.PI/1.6);
-    meteoroidTail.position.set(1.5, 0.5, 0);
+    meteoroidTail.position.set(2.5, 1, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////  
