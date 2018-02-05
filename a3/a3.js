@@ -5,7 +5,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 
 var backwardsMotion = 1;
-
+var dinoFlip = 0;
+var steer = 0;
 
 // SETUP BACKGROUND IMAGE
 var backgroundTexture = new THREE.ImageUtils.loadTexture('images/galaxy.jpg');
@@ -66,6 +67,10 @@ var models;
 var headPhone1; // flat box
 var headPhone2; // cylinder
 var headPhone3; // smaller cylinder
+
+// meteo
+var meteoroid;
+var meteoroidTail;
 
 // mydino : dino dino
 const BODY_WIDTH = 1.5;
@@ -299,6 +304,8 @@ floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
 floorTexture.repeat.set(1,1);
 floorMaterial = new THREE.MeshBasicMaterial({ map: floorTexture, side: THREE.DoubleSide });
 
+meteoTexture = new THREE.ImageUtils.loadTexture('images/meteo.jpg');
+
 // CUSTOM SHADERS
 shaderFiles = [ 'glsl/armadillo.vs.glsl', 'glsl/armadillo.fs.glsl' ];
 normalShaderMaterial = new THREE.ShaderMaterial();
@@ -474,6 +481,10 @@ function initObjects() {
     headPhone2Geometry = new THREE.CylinderGeometry( 0.25 * HEAD_SIZE, 0.25 * HEAD_SIZE, HEAD_SIZE + 0.3 );
     headPhone3Geometry = new THREE.CylinderGeometry( 0.16 * HEAD_SIZE, 0.16 * HEAD_SIZE, HEAD_SIZE + 0.5 );
 
+    // meteoroid;
+    meteoroidGeometry = new THREE.SphereGeometry( 1 );
+    meteoTailGeometry = new THREE.CylinderGeometry( 0.6, 0, 4 );
+
     // body
     ballGeometry = new THREE.SphereGeometry( 0.1 );
     tail1Geometry = new THREE.CylinderGeometry( BODY_WIDTH/3, BODY_WIDTH/4, BODY_WIDTH );
@@ -535,6 +546,10 @@ function initObjects() {
     volcanoBase.position.set(0, 3, 0);
     volcanoTop = new THREE.Mesh( volcanoTopGeometry, ballMaterial );
     volcanoTop.position.set(0, 3.3, 0);
+    meteoroid = new THREE.Mesh( meteoroidGeometry, new THREE.MeshBasicMaterial({ map: meteoTexture }) );
+    meteoroid.position.set(10, 14, -35);
+    meteoroidTail = new THREE.Mesh( meteoTailGeometry, dinoToeMaterial );
+    meteoroidTail.rotateZ(Math.PI/2);
     headPhone1 = new THREE.Mesh( headPhone1Geometry, headPhone1Material );
     headPhone2 = new THREE.Mesh( headPhone2Geometry, headPhone1Material );
     headPhone3 = new THREE.Mesh( headPhone3Geometry, dinoEyeMaterial );
@@ -574,6 +589,11 @@ function initObjects() {
     scene.add( headPhone1 );
     scene.add( headPhone2 );
     scene.add( headPhone3 );
+    scene.add( meteoroid );
+    scene.add( meteoroidTail );
+    THREE.SceneUtils.attach( meteoroidTail, scene, meteoroid );
+    meteoroidTail.rotateZ(Math.PI/1.6);
+    meteoroidTail.position.set(1.5, 0.5, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////  
@@ -647,6 +667,12 @@ function checkKeyboard() {
   } else if (keyboard.pressed("b")) {
     // play the motion backwards in time
     backwardsMotion = - backwardsMotion;
+  } else if (keyboard.pressed("f")) {
+    dinoFlip = dinoFlip == 1 ? 0 : 1;
+  } else if (keyboard.pressed("q")) {
+    steer += 0.05;
+  } else if (keyboard.pressed("w")) {
+    steer -= 0.05;
   }
 }
 
@@ -671,6 +697,7 @@ function update() {
     minicooperKFobj.timestep(sec);
     mytrexKFobj.timestep(sec);
     firework(sec);
+    meteo(sec);
     aniTime += sec;                        // update global time
   }
 
@@ -770,6 +797,16 @@ function mytrexSetMatrices(avars) {
     trex1.updateMatrixWorld();    
 }
 
+function meteo(sec) {
+  var x = meteoroid.position.x - 4 * sec;
+  var y = meteoroid.position.y - 1.5 * sec;
+  if (y <= 5) {
+    x = 10 + (Math.random() - 0.5) * 3;
+    y = 12 + (Math.random() - 0.5) * 3;
+  }
+  meteoroid.position.set(x,y,-10);
+}
+
 function firework(sec) {
     const NUM_BALLS = 1000;
     for (let i = 0; i < balls.length; i++) {
@@ -826,8 +863,8 @@ function mydinoSetMatrices(avars) {
   body.matrixAutoUpdate = false;
   body.matrix.identity();                // root of the hierarchy
   body.matrix.multiply(new THREE.Matrix4().makeTranslation(RADIUS * Math.cos(avars[0]), avars[1] + 2.7, RADIUS * Math.sin(avars[0])));    // translate body-center up
-  body.matrix.multiply(new THREE.Matrix4().makeRotationY(-avars[0] + 3*Math.PI/2));
-  body.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE));
+  body.matrix.multiply(new THREE.Matrix4().makeRotationY(-avars[0] + 3*Math.PI/2 + steer));
+  body.matrix.multiply(new THREE.Matrix4().makeRotationZ(BODY_CLINE - dinoFlip * avars[0]));
   body.updateMatrixWorld();
 
   // arm common

@@ -10,3 +10,10 @@ The background is a picture of stars shining in the galaxy. There are 5 lights f
 
 The background music is a song written by my friend Jeemin.
 
+Control:
+"b" - play the motion backwards in time
+"l" - turn on or off lighting
+"f" - flip the dino
+"q" - steer left
+"w" - steer right
+
