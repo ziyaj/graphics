@@ -345,8 +345,9 @@ function initCamera() {
 
 function initLights() {
     light = new THREE.PointLight(0xffffff);
-    light.position.set(0, 4, 20);
+    light.position.set(0, 15, 0);
     scene.add(light);
+
     ambientLight = new THREE.AmbientLight(0x000000);
     scene.add(ambientLight);
 };
@@ -471,6 +472,7 @@ function initObjects() {
     tongueGeometry = new THREE.BoxGeometry( HEAD_SIZE/15, 1.4 * HEAD_SIZE, HEAD_SIZE/2 );
     neckGeometry = new THREE.BoxGeometry( 1, 2, 1 );
     volcanoBaseGeometry = new THREE.CylinderGeometry(3, 8, 6);
+    volcanoTopGeometry = new THREE.CylinderGeometry(1.8, 1.8, 6);
     tail1 = new THREE.Mesh( tail1Geometry, dinoGreenMaterial );
     tail2 = new THREE.Mesh( tail2Geometry, dinoGreenMaterial );
     tail3 = new THREE.Mesh( tail3Geometry, dinoGreenMaterial );
@@ -504,6 +506,8 @@ function initObjects() {
     rightToe = new THREE.Mesh( toeGeometry, dinoToeMaterial );
     volcanoBase = new THREE.Mesh( volcanoBaseGeometry, new THREE.MeshBasicMaterial({ map: floorTexture }) );
     volcanoBase.position.set(0, 3, 0);
+    volcanoTop = new THREE.Mesh( volcanoTopGeometry, ballMaterial );
+    volcanoTop.position.set(0, 3.3, 0);
     scene.add( tail1 );
     scene.add( tail2 );
     scene.add( tail3 );
@@ -536,6 +540,7 @@ function initObjects() {
     scene.add( leftToe );
     scene.add( rightToe );
     scene.add( volcanoBase );
+    scene.add( volcanoTop );
 }
 
 ////////////////////////////////////////////////////////////////////////  
@@ -698,7 +703,7 @@ function trexSetMatrices(avars) {
 
   trex2.matrixAutoUpdate = false;     // tell three.js not to over-write our updates
   trex2.matrix.identity();              
-  trex2.matrix.multiply(new THREE.Matrix4().makeTranslation(avars[0] - 14, avars[1], avars[2]));  
+  trex2.matrix.multiply(new THREE.Matrix4().makeTranslation(avars[0] - 16, avars[1], avars[2]));  
   trex2.matrix.multiply(new THREE.Matrix4().makeRotationY(-Math.PI/2));
   trex2.matrix.multiply(new THREE.Matrix4().makeScale(1.5, 1.5, 1.5));
   trex2.updateMatrixWorld();
