@@ -6,6 +6,7 @@
 
 var backwardsMotion = 1;
 
+
 // SETUP RENDERER & SCENE
 var canvas = document.getElementById('canvas');
 var scene = new THREE.Scene();
@@ -13,7 +14,7 @@ var renderer = new THREE.WebGLRenderer();
 var camera;
 var cameraFov = 30;     // initial camera vertical field of view, in degrees
 
-renderer.setClearColor(0xd0f0d0); // set background colour
+renderer.setClearColor(0x000000); // set background colour
 canvas.appendChild(renderer.domElement);
 
 // SCROLLBAR FUNCTION DISABLE
@@ -269,9 +270,9 @@ diffuseMaterialB = new THREE.MeshLambertMaterial( {color: 0xffffff, side: THREE.
 diffuseMaterial2 = new THREE.MeshLambertMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
 basicMaterial = new THREE.MeshBasicMaterial( {color: 0xff0000} );
 
-floorTexture = new THREE.ImageUtils.loadTexture('images/floor.jpg');
+floorTexture = new THREE.ImageUtils.loadTexture('images/volcanic.jpg');
 floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-floorTexture.repeat.set(2,2);
+floorTexture.repeat.set(1,1);
 floorMaterial = new THREE.MeshBasicMaterial({ map: floorTexture, side: THREE.DoubleSide });
 
 // CUSTOM SHADERS
