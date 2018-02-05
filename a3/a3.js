@@ -345,7 +345,7 @@ function initCamera() {
 
 function initLights() {
     light = new THREE.PointLight(0xffffff);
-    light.position.set(0, 15, 0);
+    light.position.set(0, 15, 10);
     scene.add(light);
 
     ambientLight = new THREE.AmbientLight(0x000000);
@@ -760,7 +760,7 @@ function firework(sec) {
         }
     }
     if (balls.length < NUM_BALLS) {
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 5; i++) {
             var ball = new THREE.Mesh( ballGeometry, ballMaterial );
             const angle = Math.random() * 2 * Math.PI;
             const omega = Math.random() * Math.PI;
@@ -1068,4 +1068,10 @@ window.addEventListener('resize', resize);   // EVENT LISTENER RESIZE
 resize();
 
 update();
+
+var audio = document.createElement('audio');
+var source = document.createElement('source');
+source.src = '/sounds/clw.mp3';
+audio.appendChild(source);
+audio.play();
 
