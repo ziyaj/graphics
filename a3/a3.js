@@ -43,6 +43,12 @@ function resize() {
 
 var animation = true;
 var aniTime = 0.0;
+var relativeTime = 0.0;
+
+var volcanoBase;
+var volcanoTop;
+const NUM_BALLS = 1000;
+var balls = new Array(NUM_BALLS);
 
 var light;
 var torus;
@@ -271,6 +277,8 @@ var dinoToeMaterial;
 var floorMaterial;
 var shaderFiles;
 
+
+ballMaterial = new THREE.MeshLambertMaterial( {color: 0xff4500} );
 dinoTongueMaterial = new THREE.MeshLambertMaterial( {color: 0xff0000} );
 dinoToeMaterial = new THREE.MeshLambertMaterial( {color: 0xffffff} );
 dinoEyeMaterial = new THREE.MeshLambertMaterial( {color: 0x000000} );
@@ -375,7 +383,7 @@ function initObjects() {
     // scene.add( box );
     
     // floor
-    floorGeometry = new THREE.PlaneBufferGeometry( 20, 20 );
+    floorGeometry = new THREE.PlaneBufferGeometry( 25, 25 );
     floor = new THREE.Mesh( floorGeometry, floorMaterial );
     floor.position.y = 0;
     floor.rotation.x = Math.PI / 2;
@@ -440,6 +448,7 @@ function initObjects() {
     scene.add( laserLine );
 
     // body
+    ballGeometry = new THREE.SphereGeometry( 0.2 );
     tail1Geometry = new THREE.CylinderGeometry( BODY_WIDTH/3, BODY_WIDTH/4, BODY_WIDTH );
     tail2Geometry = new THREE.CylinderGeometry( BODY_WIDTH/4, BODY_WIDTH/5, BODY_WIDTH/2 );
     tail3Geometry = new THREE.CylinderGeometry( BODY_WIDTH/5, BODY_WIDTH/6, BODY_WIDTH/2 );
@@ -462,6 +471,7 @@ function initObjects() {
     botMouthGeometry = new THREE.BoxGeometry( HEAD_SIZE/4, 1.5 * HEAD_SIZE, HEAD_SIZE/1.2 );
     tongueGeometry = new THREE.BoxGeometry( HEAD_SIZE/15, 1.4 * HEAD_SIZE, HEAD_SIZE/2 );
     neckGeometry = new THREE.BoxGeometry( 1, 2, 1 );
+    volcanoBaseGeometry = new THREE.CylinderGeometry(3, 8, 6);
     tail1 = new THREE.Mesh( tail1Geometry, dinoGreenMaterial );
     tail2 = new THREE.Mesh( tail2Geometry, dinoGreenMaterial );
     tail3 = new THREE.Mesh( tail3Geometry, dinoGreenMaterial );
@@ -493,6 +503,26 @@ function initObjects() {
     rightFoot = new THREE.Mesh( footGeometry, dinoGreenMaterial );
     leftToe = new THREE.Mesh( toeGeometry, dinoToeMaterial );
     rightToe = new THREE.Mesh( toeGeometry, dinoToeMaterial );
+    volcanoBase = new THREE.Mesh( volcanoBaseGeometry, new THREE.MeshBasicMaterial({ map: floorTexture }) );
+    volcanoBase.position.set(0, 3, 0);
+    for (let i = 0; i < NUM_BALLS; i++) {
+        var ball = new THREE.Mesh( ballGeometry, ballMaterial );
+        const angle = Math.random() * 2 * Math.PI;
+        const omega = Math.random() * Math.PI;
+        ball.vx = Math.cos(angle) * 4;
+        ball.vy = Math.sin(omega) * 5;
+        ball.vz = Math.sin(angle) * 4;
+        const theta = Math.random() * 2 * Math.PI;
+        const x0 = Math.cos(theta);
+        const y0 = Math.sin(omega) + 6;
+        const z0 = Math.sin(theta);
+        ball.x0 = x0;
+        ball.y0 = y0;
+        ball.z0 = z0;
+        ball.position.set(x0, y0, z0);
+        balls[i] = ball;
+        scene.add( ball );
+    }
     scene.add( tail1 );
     scene.add( tail2 );
     scene.add( tail3 );
@@ -524,6 +554,7 @@ function initObjects() {
     scene.add( rightFoot );
     scene.add( leftToe );
     scene.add( rightToe );
+    scene.add( volcanoBase );
 }
 
 ////////////////////////////////////////////////////////////////////////  
@@ -621,6 +652,8 @@ function update() {
     minicooperKFobj.timestep(sec);
     mytrexKFobj.timestep(sec);
     aniTime += sec;                        // update global time
+    relativeTime += sec;
+    relativeTime = firework(relativeTime);
   }
 
   var trexAvars = trexKFobj.getAvars();       // interpolate avars
@@ -696,7 +729,7 @@ function trexSetMatrices(avars) {
 ///////////////////////////////////////////////////////////////////////////////////////
 function myCooperSetMatrices(avars) {
     const cooper = meshes["minicooper1"];
-    const RADIUS = 6.8;
+    const RADIUS = 8;
 
     cooper.matrixAutoUpdate = false;
     cooper.matrix.identity();
@@ -709,7 +742,7 @@ function myCooperSetMatrices(avars) {
 
 function mytrexSetMatrices(avars) {
     const trex1 = meshes["trex1"];
-    const RADIUS = 6.8;
+    const RADIUS = 8;
 
     trex1.matrixAutoUpdate = false;
     trex1.matrix.identity();
@@ -719,6 +752,31 @@ function mytrexSetMatrices(avars) {
     trex1.updateMatrixWorld();    
 }
 
+function firework(t) {
+    for (let i = 0; i < NUM_BALLS; i++) {
+        if (balls[i] != null) {
+            const x = balls[i].x0 + t * balls[i].vx;
+            const y = balls[i].y0 + balls[i].vy * t - 4.9 * t * t;
+            const z = balls[i].z0 + t * balls[i].vz;
+            if ( y < 0 ) {
+                const theta = Math.random() * 2 * Math.PI;
+                const x0 = Math.cos(theta);
+                const omega = Math.random() * Math.PI;
+                const y0 = Math.sin(omega) + 6;
+                const z0 = Math.sin(theta);
+                balls[i].x0 = x0;
+                balls[i].y0 = y0;
+                balls[i].z0 = z0;
+                balls[i].position.set(x0, y0, z0);
+                t = 0.0;
+            } else {
+                balls[i].position.set(x,y,z);
+            }
+        }
+    }
+    return t;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 // mydinoSetMatrices(avars)
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -726,7 +784,7 @@ function mytrexSetMatrices(avars) {
 function mydinoSetMatrices(avars) {
 
   const BODY_CLINE = -Math.PI/6;
-  const RADIUS = 7;
+  const RADIUS = 8;
   body.matrixAutoUpdate = false;
   body.matrix.identity();                // root of the hierarchy
   body.matrix.multiply(new THREE.Matrix4().makeTranslation(RADIUS * Math.cos(avars[0]), avars[1] + 2.7, RADIUS * Math.sin(avars[0])));    // translate body-center up
