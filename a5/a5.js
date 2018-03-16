@@ -43,9 +43,9 @@ window.onscroll = function () {
      window.scrollTo(0,0);
 }
 
-/////////////////////////////////////	
+/////////////////////////////////////
 // ADD LIGHTS  and define a simple material that uses lighting
-/////////////////////////////////////	
+/////////////////////////////////////
 
 light = new THREE.PointLight(0xffffff);
 light.position.set(0,4,4);                           // WCS coords for light
@@ -67,8 +67,8 @@ posyTexture = textureLoader.load( "images/posy.jpg" );   // skybox top texture
 
 ////////////////////// ENVMAP SHADER /////////////////////////////
 
-var envmapMaterial = new THREE.ShaderMaterial( {     
-        uniforms: { 
+var envmapMaterial = new THREE.ShaderMaterial( {
+        uniforms: {
            lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },
 	   matrixWorld: {value: new THREE.Matrix4()},
            myTexture: {type: 't', value: posyTexture},     // give access to skybox top texture
@@ -81,8 +81,8 @@ var envmapMaterial = new THREE.ShaderMaterial( {
 ////////////////////// BUMP SHADER /////////////////////////////
 
 var myBumpMaterial = new THREE.ShaderMaterial( {
-        uniforms: { 
-           lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },  
+        uniforms: {
+           lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },
            myColor: { value: new THREE.Vector4(0.0,1.0,0.0,1.0) }
         },
 	vertexShader: document.getElementById( 'myVertShader' ).textContent,
@@ -93,8 +93,8 @@ myBumpMaterial.uniforms.lightPosition.value.needsUpdate = true;
 ////////////////////// HOLEY SHADER /////////////////////////////
 
 var holeyMaterial = new THREE.ShaderMaterial( {
-        uniforms: { 
-           lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },  
+        uniforms: {
+           lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },
            myColor: { value: new THREE.Vector4(0.5,1.0,1.0,1.0) }
         },
 	vertexShader: document.getElementById( 'myVertShader' ).textContent,
@@ -104,7 +104,7 @@ var holeyMaterial = new THREE.ShaderMaterial( {
 ////////////////////// TOON SHADER /////////////////////////////
 
 var toonMaterial = new THREE.ShaderMaterial( {
-        uniforms: { 
+        uniforms: {
            lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },
            myColor: { value: new THREE.Vector4(1.0,0.5,0.8,1.0) }
         },
@@ -116,17 +116,17 @@ var toonMaterial = new THREE.ShaderMaterial( {
 ////////////////////////////////  OBJECTS /////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////	
+/////////////////////////////////////
 // WORLD COORDINATE FRAME
-/////////////////////////////////////	
+/////////////////////////////////////
 
 var worldFrame = new THREE.AxesHelper(5) ;
 scene.add(worldFrame);
 
 
-/////////////////////////////////////	
+/////////////////////////////////////
 // Skybox texture
-/////////////////////////////////////	
+/////////////////////////////////////
 
 var size = 1000;
 wallGeometry = new THREE.PlaneBufferGeometry(2*size, 2*size);
@@ -134,7 +134,7 @@ wallGeometry = new THREE.PlaneBufferGeometry(2*size, 2*size);
 posxTexture = textureLoader.load( "images/posx.jpg" );   //  load texture map
 posxMaterial = new THREE.MeshBasicMaterial( {map: posxTexture, side:THREE.DoubleSide });
 posxWall = new THREE.Mesh(wallGeometry, posxMaterial);   // define the wall object:  geom + shader
-posxWall.position.x = -size;            
+posxWall.position.x = -size;
 posxWall.rotation.y = Math.PI / 2;
 scene.add(posxWall);
 
@@ -142,14 +142,14 @@ scene.add(posxWall);
 negxTexture = textureLoader.load( "images/negx.jpg" );   //  load texture map
 negxMaterial = new THREE.MeshBasicMaterial( {map: negxTexture, side:THREE.DoubleSide });
 negxWall = new THREE.Mesh(wallGeometry, negxMaterial);   // define the wall object:  geom + shader
-negxWall.position.x = size;            
+negxWall.position.x = size;
 negxWall.rotation.y = -Math.PI / 2;
 scene.add(negxWall);
 
 posyTexture = textureLoader.load( "images/posy.jpg" );   //  load texture map
 posyMaterial = new THREE.MeshBasicMaterial( {map: posyTexture, side:THREE.DoubleSide });
 posyWall = new THREE.Mesh(wallGeometry, posyMaterial);   // define the wall object:  geom + shader
-posyWall.position.y = size;            
+posyWall.position.y = size;
 posyWall.rotation.x = -Math.PI / 2;
 posyWall.rotation.y = Math.PI;
 scene.add(posyWall);
@@ -165,20 +165,20 @@ scene.add(negyWall);
 poszTexture = textureLoader.load( "images/posz.jpg" );   //  load texture map
 poszMaterial = new THREE.MeshBasicMaterial( {map: poszTexture, side:THREE.DoubleSide });
 poszWall = new THREE.Mesh(wallGeometry, poszMaterial);   // define the wall object:  geom + shader
-poszWall.position.z = size;            
+poszWall.position.z = size;
 poszWall.rotation.y = Math.PI;
 scene.add(poszWall);
 
 negzTexture = textureLoader.load( "images/negz.jpg" );   //  load texture map
 negzMaterial = new THREE.MeshBasicMaterial( {map: negzTexture, side:THREE.DoubleSide });
 negzWall = new THREE.Mesh(wallGeometry, negzMaterial);   // define the wall object:  geom + shader
-negzWall.position.z = -size;            
+negzWall.position.z = -size;
 scene.add(negzWall);
 
 
-/////////////////////////////////////	
+/////////////////////////////////////
 // FLOOR with texture
-/////////////////////////////////////	
+/////////////////////////////////////
 
 var textureLoader = new THREE.TextureLoader();
 floorTexture = textureLoader.load( "images/floor.jpg" );
@@ -192,7 +192,7 @@ floor.rotation.x = Math.PI / 2;
 scene.add(floor);
 
 ///////////////////////////////////////////////////////////////////////
-//   sphere, representing the light 
+//   sphere, representing the light
 ///////////////////////////////////////////////////////////////////////
 
 sphereGeometry = new THREE.SphereGeometry(0.3, 32, 32);    // radius, segments, segments
@@ -223,9 +223,9 @@ torus.position.set(3, 0, 0.3);   // translation
 torus.rotation.set(0,0,0);     // rotation about x,y,z axes
 scene.add( torus );
 
-/////////////////////////////////////	
+/////////////////////////////////////
 // MIRROR:  square patch on the ground
-/////////////////////////////////////	
+/////////////////////////////////////
 
 mirrorGeometry = new THREE.PlaneBufferGeometry(4,4);
 mirror = new THREE.Mesh(mirrorGeometry, envmapMaterial);
@@ -236,10 +236,10 @@ mirror.rotation.x = -Math.PI / 2;
 scene.add(mirror);
 
 /////////////////////////////////////
-//  CUSTOM OBJECT 
+//  CUSTOM OBJECT
 ////////////////////////////////////
 
-var geom = new THREE.Geometry(); 
+var geom = new THREE.Geometry();
 var v0 = new THREE.Vector3(0,0,0);
 var v1 = new THREE.Vector3(3,0,0);
 var v2 = new THREE.Vector3(0,3,0);
