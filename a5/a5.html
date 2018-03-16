@@ -23,7 +23,7 @@ varying vec3 vcsNormal;
 varying vec3 ocsPosition;
 varying vec3 vcsPosition;
 void main()
-{       
+{
   vUv = uvScale * uv;
   ocsPosition = position;
   vec4 vcsP = modelViewMatrix * vec4(ocsPosition,1.0);
@@ -44,7 +44,7 @@ float inSphere(vec3 ocsPosition) { // implicit function
   float x = ocsPosition.x;
   float y = ocsPosition.y;
   float z = ocsPosition.z;
-  float grid = 5.0;
+  float grid = 4.0;
   // compute the center of the sphere
   // add a bit shift (0.4) to make sure the final hole is a circle
   float sx = (floor(x*grid)+0.5) / grid;
@@ -89,9 +89,24 @@ varying vec3 vcsNormal;
 varying vec3 ocsPosition;
 varying vec3 vcsPosition;
 
-void main( void ) {
+void main( void ) { // (f)
+  vec3 rfltVcs = reflect(vcsPosition, vcsNormal);
 
-  gl_FragColor = vec4(0.4,0.8,0.4,1.0);
+  vec4 rfltWrd = matrixWorld * vec4(rfltVcs, 1.0);
+
+  if (rfltWrd.y > abs(rfltWrd.x) && rfltWrd.y > abs(rfltWrd.z)) {
+    vec4 wcsPosition = matrixWorld * vec4(vcsPosition, 1.0);
+    float size = 1000.0;
+    float scale = 2.0 * size;
+    float t = (size - wcsPosition.y) / rfltWrd.y;
+    float u = (size + wcsPosition.x + t * rfltWrd.x) / scale;
+    float v = (size + wcsPosition.z + t * rfltWrd.z) / scale;
+    gl_FragColor = texture2D(myTexture, vec2(u,v));
+  } else {
+    vec3 L = normalize(lightPosition - vcsPosition);
+    float i = dot(vcsNormal, L);
+    gl_FragColor = vec4(i*myColor,1.0);
+  }
 }
 </script>
 
@@ -103,7 +118,7 @@ varying vec3 ocsPosition;
 uniform vec3 lightPosition;
 uniform vec3 myColor;
 
-void main( void ) { // (e)
+void main( void ) { // (e) a lot of math...
   float x = ocsPosition.x;
   float y = ocsPosition.y;
   float xy = sin((x + y) * 2.0 * 3.141593);
