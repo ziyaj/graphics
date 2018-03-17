@@ -33,6 +33,20 @@ void main()
 }
 </script>
 
+<script id="creativeFragShader" type="x-shader/x-fragment">
+varying vec3 vcsNormal;
+varying vec3 vcsPosition;
+uniform vec3 lightPosition; // (c) wow so cool
+uniform vec3 myColor;
+
+void main( void ) {
+  vec3 L = normalize(lightPosition - vcsPosition);
+  float i = dot(vcsNormal, L);
+  i = floor(i*4.0) / 4.0;
+  gl_FragColor = vec4(i*myColor,1.0);
+}
+</script>
+
 <script id="holeyShader" type="x-shader/x-fragment">
 varying vec3 vcsNormal;
 varying vec3 vcsPosition;
@@ -127,7 +141,7 @@ void main( void ) { // (e) a lot of math...
   vec3 N = normalize(surfNormal);
   vec3 L = normalize(lightPosition - vcsPosition);
   float i = dot(N, L);
-  gl_FragColor = vec4(i*myColor,1.0); 
+  gl_FragColor = vec4(i*myColor,1.0);
 }
 </script>
 

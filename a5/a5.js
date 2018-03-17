@@ -65,17 +65,23 @@ var basicMaterial = new THREE.MeshBasicMaterial( {color: 0xff0000} );
 var textureLoader = new THREE.TextureLoader();
 posyTexture = textureLoader.load( "images/posy.jpg" );   // skybox top texture
 
+////////////////////// (g) CREATIVE SHADER /////////////////////////////
+var creativeMaterial = new THREE.ShaderMaterial( {
+    vertexShader: document.getElementById( 'myVertShader' ).textContent,
+    fragmentShader: document.getElementById( 'creativeFragShader' ).textContent
+} );
+
 ////////////////////// ENVMAP SHADER /////////////////////////////
 
 var envmapMaterial = new THREE.ShaderMaterial( {
-        uniforms: {
-           lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },
-	   matrixWorld: {value: new THREE.Matrix4()},
-           myTexture: {type: 't', value: posyTexture},     // give access to skybox top texture
-           myColor: { value: new THREE.Vector4(0.8,0.8,0.6,1.0) }
-        },
-	vertexShader: document.getElementById( 'myVertShader' ).textContent,
-	fragmentShader: document.getElementById( 'envmapFragShader' ).textContent
+  uniforms: {
+    lightPosition: { value: new THREE.Vector3(0.0,0.0,-1.0) },
+    matrixWorld: { value: new THREE.Matrix4() },
+    myTexture: {type: 't', value: posyTexture},     // give access to skybox top texture
+    myColor: { value: new THREE.Vector4(0.8,0.8,0.6,1.0) }
+  },
+  vertexShader: document.getElementById( 'myVertShader' ).textContent,
+  fragmentShader: document.getElementById( 'envmapFragShader' ).textContent
 } );
 
 ////////////////////// BUMP SHADER /////////////////////////////
@@ -85,8 +91,8 @@ var myBumpMaterial = new THREE.ShaderMaterial( {
            lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },
            myColor: { value: new THREE.Vector4(0.0,1.0,0.0,1.0) }
         },
-	vertexShader: document.getElementById( 'myVertShader' ).textContent,
-	fragmentShader: document.getElementById( 'myBumpShader' ).textContent
+  vertexShader: document.getElementById( 'myVertShader' ).textContent,
+  fragmentShader: document.getElementById( 'myBumpShader' ).textContent
 } );
 myBumpMaterial.uniforms.lightPosition.value.needsUpdate = true;
 
@@ -97,8 +103,8 @@ var holeyMaterial = new THREE.ShaderMaterial( {
            lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },
            myColor: { value: new THREE.Vector4(0.5,1.0,1.0,1.0) }
         },
-	vertexShader: document.getElementById( 'myVertShader' ).textContent,
-	fragmentShader: document.getElementById( 'holeyShader' ).textContent
+  vertexShader: document.getElementById( 'myVertShader' ).textContent,
+  fragmentShader: document.getElementById( 'holeyShader' ).textContent
 } );
 
 ////////////////////// TOON SHADER /////////////////////////////
@@ -108,8 +114,8 @@ var toonMaterial = new THREE.ShaderMaterial( {
            lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },
            myColor: { value: new THREE.Vector4(1.0,0.5,0.8,1.0) }
         },
-	vertexShader: document.getElementById( 'myVertShader' ).textContent,
-	fragmentShader: document.getElementById( 'toonShader' ).textContent
+  vertexShader: document.getElementById( 'myVertShader' ).textContent,
+  fragmentShader: document.getElementById( 'toonShader' ).textContent
 } );
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -266,32 +272,44 @@ sphereA = new THREE.Mesh( new THREE.SphereGeometry( 2, 20, 10 ), envmapMaterial 
 sphereA.position.set(0,0,0);
 scene.add( sphereA );
 
+/////////////////////////////////////////////////////////////////////////
+// sphere
+/////////////////////////////////////////////////////////////////////////
+sphereB = new THREE.Mesh( new THREE.IcosahedronGeometry( 10, 4 ),
+                          new THREE.MeshBasicMaterial( {
+                            color: 0xb7ff00,
+                            wireframe: true}
+                            )
+                          );
+sphereB.position.set(0, -20, 0);
+scene.add(sphereB);
+
 /////////////////////////////////////////////////////////////////////////////////////
 //  ARMADILLO
 /////////////////////////////////////////////////////////////////////////////////////
 
 var manager = new THREE.LoadingManager();
         manager.onProgress = function ( item, loaded, total ) {
-	console.log( item, loaded, total );
+  console.log( item, loaded, total );
 };
 var armadilloTexture = envmapMaterial;
 //var armadilloTexture = diffuseMaterial;
 var onProgress = function ( xhr ) {
-	if ( xhr.lengthComputable ) {
-		var percentComplete = xhr.loaded / xhr.total * 100;
-		console.log( Math.round(percentComplete, 2) + '% downloaded' );
-	}
+  if ( xhr.lengthComputable ) {
+    var percentComplete = xhr.loaded / xhr.total * 100;
+    console.log( Math.round(percentComplete, 2) + '% downloaded' );
+  }
 };
 var onError = function ( xhr ) {
 };
 var loader = new THREE.OBJLoader( manager );
 loader.load( 'obj/armadillo.obj', function ( object ) {
-	object.traverse( function ( child ) {
-		if ( child instanceof THREE.Mesh ) {
-			child.material = armadilloTexture;
-		}
-	} );
-	scene.add( object );
+  object.traverse( function ( child ) {
+    if ( child instanceof THREE.Mesh ) {
+      child.material = armadilloTexture;
+    }
+  } );
+  scene.add( object );
         object.scale.set(2,2,2);
         object.position.x = -5;
         object.position.y = 1;
