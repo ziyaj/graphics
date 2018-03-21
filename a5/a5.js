@@ -15,6 +15,7 @@ var scene = new THREE.Scene();
 var renderer = new THREE.WebGLRenderer();
 renderer.setClearColor(0xd0f0d0); // set background colour
 canvas.appendChild(renderer.domElement);
+var start = Date.now();
 
 // SETUP CAMERA
 var camera = new THREE.PerspectiveCamera(30,1,0.1,10000); // view angle, aspect ratio, near, far
@@ -64,10 +65,26 @@ var basicMaterial = new THREE.MeshBasicMaterial( {color: 0xff0000} );
 
 var textureLoader = new THREE.TextureLoader();
 posyTexture = textureLoader.load( "images/posy.jpg" );   // skybox top texture
+negyTexture = textureLoader.load( "images/negy.jpg" );   //  load texture map
+poszTexture = textureLoader.load( "images/posz.jpg" );   //  load texture map
+negzTexture = textureLoader.load( "images/negz.jpg" );   //  load texture map
+posxTexture = textureLoader.load( "images/posx.jpg" );   //  load texture map
+negxTexture = textureLoader.load( "images/negx.jpg" );   //  load texture map
+expoTexture = textureLoader.load( "images/explosion.png" );
 
 ////////////////////// (g) CREATIVE SHADER /////////////////////////////
 var creativeMaterial = new THREE.ShaderMaterial( {
-    vertexShader: document.getElementById( 'myVertShader' ).textContent,
+  uniforms: {
+    tExplosion: {
+      type: "t",
+      value: expoTexture
+    },
+    time: { // float initialized to 0
+      type: "f",
+      value: 0.0
+    }
+  },
+    vertexShader: document.getElementById( 'creativeVertShader' ).textContent,
     fragmentShader: document.getElementById( 'creativeFragShader' ).textContent
 } );
 
@@ -82,6 +99,24 @@ var envmapMaterial = new THREE.ShaderMaterial( {
   },
   vertexShader: document.getElementById( 'myVertShader' ).textContent,
   fragmentShader: document.getElementById( 'envmapFragShader' ).textContent
+} );
+
+////////////////////// rain SHADER /////////////////////////////
+
+var rainMaterial = new THREE.ShaderMaterial( {
+  uniforms: {
+    lightPosition: { value: new THREE.Vector3(0.0,0.0,-1.0) },
+    matrixWorld: { value: new THREE.Matrix4() },
+    myTopTexture: {type: 't', value: posyTexture},     // give access to skybox top texture
+    myBotTexture: {type: 't', value: negyTexture},     // give access to skybox bot texture
+    myFrontTexture: {type: 't', value: poszTexture},     // give access to skybox front texture
+    myBackTexture: {type: 't', value: negzTexture},     // give access to skybox back texture
+    myLeftTexture: {type: 't', value: posxTexture},     // give access to skybox left texture
+    myRightTexture: {type: 't', value: negxTexture},     // give access to skybox right texture
+    myColor: { value: new THREE.Vector4(0.8,0.8,0.6,1.0) }
+  },
+  vertexShader: document.getElementById( 'myVertShader' ).textContent,
+  fragmentShader: document.getElementById( 'rainFragShader' ).textContent
 } );
 
 ////////////////////// BUMP SHADER /////////////////////////////
@@ -137,7 +172,6 @@ scene.add(worldFrame);
 var size = 1000;
 wallGeometry = new THREE.PlaneBufferGeometry(2*size, 2*size);
 
-posxTexture = textureLoader.load( "images/posx.jpg" );   //  load texture map
 posxMaterial = new THREE.MeshBasicMaterial( {map: posxTexture, side:THREE.DoubleSide });
 posxWall = new THREE.Mesh(wallGeometry, posxMaterial);   // define the wall object:  geom + shader
 posxWall.position.x = -size;
@@ -145,14 +179,12 @@ posxWall.rotation.y = Math.PI / 2;
 scene.add(posxWall);
 
 ////// (b) TODO:  add the other walls of the skybox
-negxTexture = textureLoader.load( "images/negx.jpg" );   //  load texture map
 negxMaterial = new THREE.MeshBasicMaterial( {map: negxTexture, side:THREE.DoubleSide });
 negxWall = new THREE.Mesh(wallGeometry, negxMaterial);   // define the wall object:  geom + shader
 negxWall.position.x = size;
 negxWall.rotation.y = -Math.PI / 2;
 scene.add(negxWall);
 
-posyTexture = textureLoader.load( "images/posy.jpg" );   //  load texture map
 posyMaterial = new THREE.MeshBasicMaterial( {map: posyTexture, side:THREE.DoubleSide });
 posyWall = new THREE.Mesh(wallGeometry, posyMaterial);   // define the wall object:  geom + shader
 posyWall.position.y = size;
@@ -160,7 +192,6 @@ posyWall.rotation.x = -Math.PI / 2;
 posyWall.rotation.y = Math.PI;
 scene.add(posyWall);
 
-negyTexture = textureLoader.load( "images/negy.jpg" );   //  load texture map
 negyMaterial = new THREE.MeshBasicMaterial( {map: negyTexture, side:THREE.DoubleSide });
 negyWall = new THREE.Mesh(wallGeometry, negyMaterial);   // define the wall object:  geom + shader
 negyWall.position.y = -size;
@@ -168,14 +199,12 @@ negyWall.rotation.x = -Math.PI / 2;
 negyWall.rotation.z = Math.PI;
 scene.add(negyWall);
 
-poszTexture = textureLoader.load( "images/posz.jpg" );   //  load texture map
 poszMaterial = new THREE.MeshBasicMaterial( {map: poszTexture, side:THREE.DoubleSide });
 poszWall = new THREE.Mesh(wallGeometry, poszMaterial);   // define the wall object:  geom + shader
 poszWall.position.z = size;
 poszWall.rotation.y = Math.PI;
 scene.add(poszWall);
 
-negzTexture = textureLoader.load( "images/negz.jpg" );   //  load texture map
 negzMaterial = new THREE.MeshBasicMaterial( {map: negzTexture, side:THREE.DoubleSide });
 negzWall = new THREE.Mesh(wallGeometry, negzMaterial);   // define the wall object:  geom + shader
 negzWall.position.z = -size;
@@ -190,12 +219,54 @@ var textureLoader = new THREE.TextureLoader();
 floorTexture = textureLoader.load( "images/floor.jpg" );
 floorTexture.magFilter = THREE.NearestFilter;
 floorTexture.minFilter = THREE.LinearMipMapLinearFilter; // (a) cool!
-floorMaterial = new THREE.MeshBasicMaterial( {map: floorTexture, side:THREE.DoubleSide });
-floorGeometry = new THREE.PlaneBufferGeometry(15, 15);
+var floorMaterial = new THREE.ShaderMaterial( {
+  uniforms: {
+    lightPosition: { value: new THREE.Vector3(0.0,0.0,-1.0) },
+    matrixWorld: { value: new THREE.Matrix4() },
+    myTexture: {type: 't', value: floorTexture},     // give access to skybox top texture
+    time: { // float initialized to 0
+      type: "f",
+      value: 0.0
+    }
+  },
+  vertexShader: document.getElementById( 'spinShader' ).textContent,
+  fragmentShader: document.getElementById( 'spinFragShader' ).textContent
+} );
+
+floorGeometry = new THREE.Geometry();
+var v0 = new THREE.Vector3(0,0,0);
+var v1 = new THREE.Vector3(20,0,0);
+var v2 = new THREE.Vector3(0,20,0);
+var v3 = new THREE.Vector3(20,20,0);
+
+floorGeometry.vertices.push(v0);
+floorGeometry.vertices.push(v1);
+floorGeometry.vertices.push(v2);
+floorGeometry.vertices.push(v3);
+
+floorGeometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
+floorGeometry.faces.push( new THREE.Face3( 1, 3, 2 ) );
+floorGeometry.computeFaceNormals();
+
 floor = new THREE.Mesh(floorGeometry, floorMaterial);
+floor.position.x = -10;
 floor.position.y = -1.1;
-floor.rotation.x = Math.PI / 2;
+floor.position.z = 10;
+floor.rotation.x = - Math.PI / 2;
 scene.add(floor);
+
+/////////////////////////////////////
+// galaxy with texture
+/////////////////////////////////////
+
+// galaTexture = textureLoader.load( "images/galaxy.jpg" );
+// galaTexture.magFilter = THREE.NearestFilter;
+// galaTexture.minFilter = THREE.LinearMipMapLinearFilter;
+// galaMaterial = new THREE.MeshBasicMaterial( {map: galaTexture, side:THREE.DoubleSide });
+// galaGeometry = new THREE.PlaneBufferGeometry(10000, 10000);
+// gala = new THREE.Mesh(galaGeometry, galaMaterial);
+// gala.position.z = -2000;
+// scene.add(gala);
 
 ///////////////////////////////////////////////////////////////////////
 //   sphere, representing the light
@@ -273,16 +344,21 @@ sphereA.position.set(0,0,0);
 scene.add( sphereA );
 
 /////////////////////////////////////////////////////////////////////////
+// sphere B
+/////////////////////////////////////////////////////////////////////////
+sphereB = new THREE.Mesh( new THREE.IcosahedronGeometry( 40, 4 ),
+                          creativeMaterial
+                          );
+sphereB.position.set(0, 0, 0);
+scene.add(sphereB);
+
+/////////////////////////////////////////////////////////////////////////
 // sphere
 /////////////////////////////////////////////////////////////////////////
-sphereB = new THREE.Mesh( new THREE.IcosahedronGeometry( 10, 4 ),
-                          new THREE.MeshBasicMaterial( {
-                            color: 0xb7ff00,
-                            wireframe: true}
-                            )
-                          );
-sphereB.position.set(0, -20, 0);
-scene.add(sphereB);
+
+sphereC = new THREE.Mesh( new THREE.SphereGeometry( 1, 20, 10 ), rainMaterial );
+sphereC.position.set(3,5,0);
+scene.add( sphereC );
 
 /////////////////////////////////////////////////////////////////////////////////////
 //  ARMADILLO
@@ -292,7 +368,7 @@ var manager = new THREE.LoadingManager();
         manager.onProgress = function ( item, loaded, total ) {
   console.log( item, loaded, total );
 };
-var armadilloTexture = envmapMaterial;
+var armadilloTexture = rainMaterial;
 //var armadilloTexture = diffuseMaterial;
 var onProgress = function ( xhr ) {
   if ( xhr.lengthComputable ) {
@@ -344,6 +420,8 @@ function checkKeyboard() {
   holeyMaterial.uniforms.lightPosition.value.needsUpdate = true;
   envmapMaterial.uniforms.lightPosition.value = vcsLight;
   envmapMaterial.uniforms.lightPosition.value.needsUpdate = true;
+  rainMaterial.uniforms.lightPosition.value = vcsLight;
+  rainMaterial.uniforms.lightPosition.value.needsUpdate = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -355,6 +433,10 @@ function update() {
   requestAnimationFrame(update);
   envmapMaterial.uniforms.matrixWorld.value = camera.matrixWorld;
   envmapMaterial.uniforms.matrixWorld.update = true;
+  rainMaterial.uniforms.matrixWorld.value = camera.matrixWorld;
+  rainMaterial.uniforms.matrixWorld.update = true;
+  creativeMaterial.uniforms[ 'time' ].value = 0.00025 * ( Date.now() - start );
+  floorMaterial.uniforms[ 'time' ].value = 0.0025 * ( Date.now() - start );
   renderer.render(scene, camera);
 }
 
