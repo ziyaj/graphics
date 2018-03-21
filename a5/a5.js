@@ -16,6 +16,8 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setClearColor(0xd0f0d0); // set background colour
 canvas.appendChild(renderer.domElement);
 var start = Date.now();
+var balls = [];
+var rain = false;
 
 // SETUP CAMERA
 var camera = new THREE.PerspectiveCamera(30,1,0.1,10000); // view angle, aspect ratio, near, far
@@ -71,6 +73,7 @@ negzTexture = textureLoader.load( "images/negz.jpg" );   //  load texture map
 posxTexture = textureLoader.load( "images/posx.jpg" );   //  load texture map
 negxTexture = textureLoader.load( "images/negx.jpg" );   //  load texture map
 expoTexture = textureLoader.load( "images/explosion.png" );
+potterTexture = textureLoader.load( "images/harrypotter.jpg" );
 
 ////////////////////// (g) CREATIVE SHADER /////////////////////////////
 var creativeMaterial = new THREE.ShaderMaterial( {
@@ -95,6 +98,7 @@ var envmapMaterial = new THREE.ShaderMaterial( {
     lightPosition: { value: new THREE.Vector3(0.0,0.0,-1.0) },
     matrixWorld: { value: new THREE.Matrix4() },
     myTexture: {type: 't', value: posyTexture},     // give access to skybox top texture
+    myPotterTexture: {type: 't', value: potterTexture},     // give access to skybox top texture
     myColor: { value: new THREE.Vector4(0.8,0.8,0.6,1.0) }
   },
   vertexShader: document.getElementById( 'myVertShader' ).textContent,
@@ -284,19 +288,19 @@ scene.add(lightSphere);
 
 // parameters:   radius of torus, diameter of tube, segments around radius, segments around torus
 torusGeometry = new THREE.TorusGeometry( 1.2, 0.4, 10, 20 );
-torus = new THREE.Mesh( torusGeometry, holeyMaterial);
-torus.position.set(6, 0, 0.3);   // translation
-torus.rotation.set(0,0,0);     // rotation about x,y,z axes
-scene.add( torus );
+torus1 = new THREE.Mesh( torusGeometry, holeyMaterial);
+torus1.position.set(-5, 3.6, -3);   // translation
+torus1.rotation.set(0,0,0);     // rotation about x,y,z axes
+scene.add( torus1 );
 
 /////////////////////////////////////////////////////////////////////////
 // toon-shaded torus
 /////////////////////////////////////////////////////////////////////////
 
 // parameters:   radius of torus, diameter of tube, segments around radius, segments around torus
-torusGeometry = new THREE.TorusGeometry( 1.2, 0.4, 10, 20 );
+torusGeometry = new THREE.TorusGeometry( 1.6, 0.5, 10, 20 );
 torus = new THREE.Mesh( torusGeometry, toonMaterial);
-torus.position.set(3, 0, 0.3);   // translation
+torus.position.set(0, 5, 0);   // translation
 torus.rotation.set(0,0,0);     // rotation about x,y,z axes
 scene.add( torus );
 
@@ -305,9 +309,9 @@ scene.add( torus );
 /////////////////////////////////////
 
 mirrorGeometry = new THREE.PlaneBufferGeometry(4,4);
-mirror = new THREE.Mesh(mirrorGeometry, envmapMaterial);
-mirror.position.x = 2.0;
-mirror.position.z = 4.0;
+mirror = new THREE.Mesh(mirrorGeometry, rainMaterial);
+mirror.position.x = 4.0;
+mirror.position.z = 5.0;
 mirror.position.y = -1.0;
 mirror.rotation.x = -Math.PI / 2;
 scene.add(mirror);
@@ -332,7 +336,7 @@ geom.faces.push( new THREE.Face3( 1, 3, 2 ) );
 geom.computeFaceNormals();
 
 customObject = new THREE.Mesh( geom, myBumpMaterial );
-customObject.position.set(0, 0, -2);
+customObject.position.set(2.2, 0, 0);
 scene.add(customObject);
 
 /////////////////////////////////////////////////////////////////////////
@@ -346,10 +350,10 @@ scene.add( sphereA );
 /////////////////////////////////////////////////////////////////////////
 // sphere B
 /////////////////////////////////////////////////////////////////////////
-sphereB = new THREE.Mesh( new THREE.IcosahedronGeometry( 40, 4 ),
+sphereB = new THREE.Mesh( new THREE.IcosahedronGeometry( 1, 4 ),
                           creativeMaterial
                           );
-sphereB.position.set(0, 0, 0);
+sphereB.position.set(-5, 3.6, -3);
 scene.add(sphereB);
 
 /////////////////////////////////////////////////////////////////////////
@@ -357,7 +361,7 @@ scene.add(sphereB);
 /////////////////////////////////////////////////////////////////////////
 
 sphereC = new THREE.Mesh( new THREE.SphereGeometry( 1, 20, 10 ), rainMaterial );
-sphereC.position.set(3,5,0);
+sphereC.position.set(0,5,0);
 scene.add( sphereC );
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -406,6 +410,9 @@ function checkKeyboard() {
     light.position.x -= 0.1;
   else if (keyboard.pressed("D"))
     light.position.x += 0.1;
+  if (keyboard.pressed("R")) {
+    rain = !rain;
+  }
   lightSphere.position.set(light.position.x, light.position.y, light.position.z);
 
     // compute light position in VCS coords,  supply this to the shaders
@@ -427,16 +434,67 @@ function checkKeyboard() {
 ///////////////////////////////////////////////////////////////////////////////////////
 // UPDATE CALLBACK
 ///////////////////////////////////////////////////////////////////////////////////////
+ballGeometry = new THREE.SphereGeometry( 0.05 );
+function firework(sec) {
+    const NUM_BALLS = 1000;
+    for (let i = 0; i < balls.length; i++) {
+        const x = balls[i].x0 + balls[i].t * balls[i].vx;
+        const y = balls[i].y0 + balls[i].vy * balls[i].t;
+        const z = balls[i].z0 + balls[i].t * balls[i].vz;
+        if ( y < -1 ) {
+            const theta = Math.random() * 2 * Math.PI;
+            const x0 = (Math.random() - 0.5) * 20;
+            const omega = Math.random() * Math.PI;
+            const y0 = 10;
+            const z0 = (Math.random() - 0.5) * 20;
+            balls[i].x0 = x0;
+            balls[i].y0 = y0;
+            balls[i].z0 = z0;
+            balls[i].position.set(x0, y0, z0);
+            balls[i].t = 0.0;
+        } else {
+            balls[i].position.set(x,y,z);
+            balls[i].t += sec;
+        }
+    }
+    if (balls.length < NUM_BALLS) {
+        for (let i = 0; i < 2; i++) {
+            var ball = new THREE.Mesh( ballGeometry, rainMaterial );
+            const angle = Math.random() * 2 * Math.PI;
+            const omega = Math.random() * Math.PI;
+            ball.vx = 0;
+            ball.vy = -1;
+            ball.vz = 0;
+            const theta = Math.random() * 2 * Math.PI;
+            const x0 = (Math.random() - 0.5) * 20;
+            const y0 = 10;
+            const z0 = (Math.random() - 0.5) * 20;
+            ball.x0 = x0;
+            ball.y0 = y0;
+            ball.z0 = z0;
+            ball.position.set(x0, y0, z0);
+            ball.t = 0.0;
+            balls.push( ball );
+            scene.add( ball );
+        }
+    }
+}
+
 
 function update() {
   checkKeyboard();
   requestAnimationFrame(update);
+  if (rain) {
+    firework(0.02);
+  }
   envmapMaterial.uniforms.matrixWorld.value = camera.matrixWorld;
   envmapMaterial.uniforms.matrixWorld.update = true;
   rainMaterial.uniforms.matrixWorld.value = camera.matrixWorld;
   rainMaterial.uniforms.matrixWorld.update = true;
-  creativeMaterial.uniforms[ 'time' ].value = 0.00025 * ( Date.now() - start );
-  floorMaterial.uniforms[ 'time' ].value = 0.0025 * ( Date.now() - start );
+  var t = 0.00025 * ( Date.now() - start );
+  creativeMaterial.uniforms[ 'time' ].value = t;
+  floorMaterial.uniforms[ 'time' ].value = t;
+  torus1.rotation.z = t;
   renderer.render(scene, camera);
 }
 
