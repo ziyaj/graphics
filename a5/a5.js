@@ -459,12 +459,15 @@ function checkKeyboard() {
     rain = !rain;
   }
   if (keyboard.pressed("C")) {
-    changePic = true;
     choose1 = !choose1;
+    envmapMaterial.uniforms.myPotterTexture.value = choose1 ? potterTexture : hp2Texture;
+    envmapMaterial.uniforms.myPotterTexture.update = true;
+    tvMaterial.uniforms.myTexture.value = choose1 ? hp2Texture : potterTexture;
+    tvMaterial.uniforms.myTexture.update = true;
   }
   lightSphere.position.set(light.position.x, light.position.y, light.position.z);
 
-    // compute light position in VCS coords,  supply this to the shaders
+  // compute light position in VCS coords,  supply this to the shaders
   vcsLight.set(light.position.x, light.position.y, light.position.z);
   vcsLight.applyMatrix4(camera.matrixWorldInverse);
 
@@ -533,14 +536,6 @@ function update() {
   }
   envmapMaterial.uniforms.matrixWorld.value = camera.matrixWorld;
   envmapMaterial.uniforms.matrixWorld.update = true;
-  if (changePic) {
-    // myPotterTexture: {type: 't', value: potterTexture}
-    envmapMaterial.uniforms.myPotterTexture.value = choose1 ? potterTexture : hp2Texture;
-    envmapMaterial.uniforms.myPotterTexture.update = true;
-    tvMaterial.uniforms.myTexture.value = choose1 ? hp2Texture : potterTexture;
-    tvMaterial.uniforms.myTexture.update = true;
-    changePic = false;
-  }
   rainMaterial.uniforms.matrixWorld.value = camera.matrixWorld;
   rainMaterial.uniforms.matrixWorld.update = true;
   var t = 0.00025 * ( Date.now() - start );
