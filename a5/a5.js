@@ -18,6 +18,8 @@ canvas.appendChild(renderer.domElement);
 var start = Date.now();
 var balls = [];
 var rain = false;
+var changePic = false;
+var choose1 = true;
 
 // SETUP CAMERA
 var camera = new THREE.PerspectiveCamera(30,1,0.1,10000); // view angle, aspect ratio, near, far
@@ -74,6 +76,7 @@ posxTexture = textureLoader.load( "images/posx.jpg" );   //  load texture map
 negxTexture = textureLoader.load( "images/negx.jpg" );   //  load texture map
 expoTexture = textureLoader.load( "images/explosion.png" );
 potterTexture = textureLoader.load( "images/harrypotter.jpg" );
+hp2Texture = textureLoader.load( "images/hp2.jpg" );
 
 ////////////////////// (g) CREATIVE SHADER /////////////////////////////
 var creativeMaterial = new THREE.ShaderMaterial( {
@@ -89,6 +92,27 @@ var creativeMaterial = new THREE.ShaderMaterial( {
   },
     vertexShader: document.getElementById( 'creativeVertShader' ).textContent,
     fragmentShader: document.getElementById( 'creativeFragShader' ).textContent
+} );
+
+////////////////////// (g) PERLIN SHADER /////////////////////////////
+var perlinMaterial = new THREE.ShaderMaterial( {
+  uniforms: {
+    lightPosition: { value: new THREE.Vector3(0.0,0.0,-1.0) },
+    matrixWorld: { value: new THREE.Matrix4() },
+    myTopTexture: {type: 't', value: posyTexture},     // give access to skybox top texture
+    myBotTexture: {type: 't', value: negyTexture},     // give access to skybox bot texture
+    myFrontTexture: {type: 't', value: poszTexture},     // give access to skybox front texture
+    myBackTexture: {type: 't', value: negzTexture},     // give access to skybox back texture
+    myLeftTexture: {type: 't', value: posxTexture},     // give access to skybox left texture
+    myRightTexture: {type: 't', value: negxTexture},     // give access to skybox right texture
+    myColor: { value: new THREE.Vector4(0.8,0.8,0.6,1.0) },
+    time: { // float initialized to 0
+      type: "f",
+      value: 0.0
+    }
+  },
+    vertexShader: document.getElementById( 'creativeVertShader' ).textContent,
+    fragmentShader: document.getElementById( 'perlinFragShader' ).textContent
 } );
 
 ////////////////////// ENVMAP SHADER /////////////////////////////
@@ -260,17 +284,38 @@ floor.rotation.x = - Math.PI / 2;
 scene.add(floor);
 
 /////////////////////////////////////
-// galaxy with texture
+// tv with texture
 /////////////////////////////////////
+tvGeometry = new THREE.Geometry();
+var v0 = new THREE.Vector3(0,0,0);
+var v1 = new THREE.Vector3(10,0,0);
+var v2 = new THREE.Vector3(0,10,0);
+var v3 = new THREE.Vector3(10,10,0);
 
-// galaTexture = textureLoader.load( "images/galaxy.jpg" );
-// galaTexture.magFilter = THREE.NearestFilter;
-// galaTexture.minFilter = THREE.LinearMipMapLinearFilter;
-// galaMaterial = new THREE.MeshBasicMaterial( {map: galaTexture, side:THREE.DoubleSide });
-// galaGeometry = new THREE.PlaneBufferGeometry(10000, 10000);
-// gala = new THREE.Mesh(galaGeometry, galaMaterial);
-// gala.position.z = -2000;
-// scene.add(gala);
+tvGeometry.vertices.push(v0);
+tvGeometry.vertices.push(v1);
+tvGeometry.vertices.push(v2);
+tvGeometry.vertices.push(v3);
+
+tvGeometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
+tvGeometry.faces.push( new THREE.Face3( 1, 3, 2 ) );
+tvGeometry.computeFaceNormals();
+
+var tvMaterial = new THREE.ShaderMaterial( {
+  uniforms: {
+    lightPosition: { value: new THREE.Vector3(0.0,0.0,-1.0) },
+    matrixWorld: { value: new THREE.Matrix4() },
+    myTexture: {type: 't', value: hp2Texture },     // give access to skybox top texture
+  },
+  vertexShader: document.getElementById( 'myVertShader' ).textContent,
+  fragmentShader: document.getElementById( 'potterFragShader' ).textContent
+} );
+
+tv = new THREE.Mesh(tvGeometry, tvMaterial);
+tv.position.x = -5;
+tv.position.z = -20;
+
+scene.add(tv);
 
 ///////////////////////////////////////////////////////////////////////
 //   sphere, representing the light
@@ -360,7 +405,7 @@ scene.add(sphereB);
 // sphere
 /////////////////////////////////////////////////////////////////////////
 
-sphereC = new THREE.Mesh( new THREE.SphereGeometry( 1, 20, 10 ), rainMaterial );
+sphereC = new THREE.Mesh( new THREE.SphereGeometry( 1, 20, 10 ), perlinMaterial );
 sphereC.position.set(0,5,0);
 scene.add( sphereC );
 
@@ -413,6 +458,10 @@ function checkKeyboard() {
   if (keyboard.pressed("R")) {
     rain = !rain;
   }
+  if (keyboard.pressed("C")) {
+    changePic = true;
+    choose1 = !choose1;
+  }
   lightSphere.position.set(light.position.x, light.position.y, light.position.z);
 
     // compute light position in VCS coords,  supply this to the shaders
@@ -434,19 +483,17 @@ function checkKeyboard() {
 ///////////////////////////////////////////////////////////////////////////////////////
 // UPDATE CALLBACK
 ///////////////////////////////////////////////////////////////////////////////////////
-ballGeometry = new THREE.SphereGeometry( 0.05 );
+ballGeometry = new THREE.SphereGeometry( 0.12 );
 function firework(sec) {
-    const NUM_BALLS = 1000;
+    const NUM_BALLS = 400;
     for (let i = 0; i < balls.length; i++) {
         const x = balls[i].x0 + balls[i].t * balls[i].vx;
-        const y = balls[i].y0 + balls[i].vy * balls[i].t;
+        const y = balls[i].y0 + balls[i].t * balls[i].vy;
         const z = balls[i].z0 + balls[i].t * balls[i].vz;
-        if ( y < -1 ) {
-            const theta = Math.random() * 2 * Math.PI;
-            const x0 = (Math.random() - 0.5) * 20;
-            const omega = Math.random() * Math.PI;
-            const y0 = 10;
-            const z0 = (Math.random() - 0.5) * 20;
+        if ( Math.abs(x) > 20 || Math.abs(y) > 20 || Math.abs(z) > 20 ) {
+            const x0 = 0;
+            const y0 = 5;
+            const z0 = 0;
             balls[i].x0 = x0;
             balls[i].y0 = y0;
             balls[i].z0 = z0;
@@ -460,15 +507,12 @@ function firework(sec) {
     if (balls.length < NUM_BALLS) {
         for (let i = 0; i < 2; i++) {
             var ball = new THREE.Mesh( ballGeometry, rainMaterial );
-            const angle = Math.random() * 2 * Math.PI;
-            const omega = Math.random() * Math.PI;
-            ball.vx = 0;
-            ball.vy = -1;
-            ball.vz = 0;
-            const theta = Math.random() * 2 * Math.PI;
-            const x0 = (Math.random() - 0.5) * 20;
-            const y0 = 10;
-            const z0 = (Math.random() - 0.5) * 20;
+            ball.vx = (Math.random() - 0.5) * 6;
+            ball.vy = (Math.random() - 0.5) * 6;
+            ball.vz = (Math.random() - 0.5) * 6;
+            const x0 = 0;
+            const y0 = 5;
+            const z0 = 0;
             ball.x0 = x0;
             ball.y0 = y0;
             ball.z0 = z0;
@@ -489,11 +533,20 @@ function update() {
   }
   envmapMaterial.uniforms.matrixWorld.value = camera.matrixWorld;
   envmapMaterial.uniforms.matrixWorld.update = true;
+  if (changePic) {
+    // myPotterTexture: {type: 't', value: potterTexture}
+    envmapMaterial.uniforms.myPotterTexture.value = choose1 ? potterTexture : hp2Texture;
+    envmapMaterial.uniforms.myPotterTexture.update = true;
+    tvMaterial.uniforms.myTexture.value = choose1 ? hp2Texture : potterTexture;
+    tvMaterial.uniforms.myTexture.update = true;
+    changePic = false;
+  }
   rainMaterial.uniforms.matrixWorld.value = camera.matrixWorld;
   rainMaterial.uniforms.matrixWorld.update = true;
   var t = 0.00025 * ( Date.now() - start );
   creativeMaterial.uniforms[ 'time' ].value = t;
   floorMaterial.uniforms[ 'time' ].value = t;
+  perlinMaterial.uniforms[ 'time' ].value = t;
   torus1.rotation.z = t;
   renderer.render(scene, camera);
 }

@@ -217,6 +217,10 @@ varying vec2 vUv;
 varying float noise;
 uniform float time;
 
+varying vec3 vcsNormal;
+varying vec3 ocsPosition;
+varying vec3 vcsPosition;
+
 float turbulence( vec3 p ) {
 
   float w = 100.0;
@@ -241,6 +245,11 @@ void main() {
   vec3 newPosition = position + normal * displacement;
   gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
 
+  ocsPosition = position;
+  vec4 vcsP = modelViewMatrix * vec4(ocsPosition,1.0);
+  vcsPosition = vcsP.xyz;
+  vcsNormal = normalMatrix * normal;       // normalMatrix is the transpose-inv of the rotation matrix
+
 }
 </script>
 
@@ -260,6 +269,60 @@ void main() {
 }
 </script>
 
+<script id="perlinFragShader" type="x-shader/x-fragment">
+uniform vec3 lightPosition;
+uniform sampler2D myTopTexture;
+uniform sampler2D myBotTexture;
+uniform sampler2D myFrontTexture;
+uniform sampler2D myBackTexture;
+uniform sampler2D myLeftTexture;
+uniform sampler2D myRightTexture;
+uniform vec3 myColor;
+uniform mat4 matrixWorld;
+varying vec3 vcsNormal;
+varying vec3 ocsPosition;
+varying vec3 vcsPosition;
+varying vec2 vUv;
+varying float noise;
+
+float random( vec3 scale, float seed ){
+  return fract( sin( dot( gl_FragCoord.xyz + seed, scale ) ) * 43758.5453 + seed ) ;
+}
+
+void main() {
+  vec3 rfltVcs = reflect(vcsPosition, vcsNormal);
+
+  vec4 rfltWrd = matrixWorld * vec4(rfltVcs, 1.0);
+
+  if (rfltWrd.y > abs(rfltWrd.x) && rfltWrd.y > abs(rfltWrd.z)) {
+    float r = 0.01 * random( vec3( 12.9898, 78.233, 151.7182 ), 0.0 );
+    vec2 tPos = vec2( 0, 1.3 * noise + r );
+    gl_FragColor = texture2D(myTopTexture, tPos);
+  } else if (rfltWrd.x < 0.0 && abs(rfltWrd.x) > abs(rfltWrd.y) && abs(rfltWrd.x) > abs(rfltWrd.z)) {
+    float r = 0.01 * random( vec3( 12.9898, 78.233, 151.7182 ), 0.0 );
+    vec2 tPos = vec2( 0, 1.3 * noise + r );
+    gl_FragColor = texture2D(myLeftTexture, tPos);
+  } else if (rfltWrd.x > abs(rfltWrd.y) && rfltWrd.x > abs(rfltWrd.z)) {
+    float r = 0.01 * random( vec3( 12.9898, 78.233, 151.7182 ), 0.0 );
+    vec2 tPos = vec2( 0, 1.3 * noise + r );
+    gl_FragColor = texture2D(myRightTexture, tPos);
+  } else if (rfltWrd.z > abs(rfltWrd.y) && rfltWrd.z > abs(rfltWrd.x)) {
+    float r = 0.01 * random( vec3( 12.9898, 78.233, 151.7182 ), 0.0 );
+    vec2 tPos = vec2( 0, 1.3 * noise + r );
+    gl_FragColor = texture2D(myFrontTexture, tPos);
+  } else if (rfltWrd.z < 0.0 && abs(rfltWrd.z) > abs(rfltWrd.y) && abs(rfltWrd.z) > abs(rfltWrd.x)) {
+    float r = 0.01 * random( vec3( 12.9898, 78.233, 151.7182 ), 0.0 );
+    vec2 tPos = vec2( 0, 1.3 * noise + r );
+    gl_FragColor = texture2D(myBackTexture, tPos);
+  } else {
+    float r = 0.01 * random( vec3( 12.9898, 78.233, 151.7182 ), 0.0 );
+    vec2 tPos = vec2( 0, 1.3 * noise + r );
+    gl_FragColor = texture2D(myBotTexture, tPos);
+  }
+
+}
+</script>
+
 <script id="spinFragShader" type="x-shader/x-fragment">
 uniform sampler2D myTexture;
 varying vec3 ocsPosition;
@@ -269,6 +332,18 @@ void main( void ) {
     float scale = 20.0;
     float u = newPosition.x / scale;
     float v = newPosition.y / scale;
+    gl_FragColor = texture2D(myTexture, vec2(u,v));
+}
+</script>
+
+<script id="potterFragShader" type="x-shader/x-fragment">
+uniform sampler2D myTexture;
+varying vec3 ocsPosition;
+
+void main( void ) {
+    float scale = 10.0;
+    float u = ocsPosition.x / scale;
+    float v = ocsPosition.y / scale;
     gl_FragColor = texture2D(myTexture, vec2(u,v));
 }
 </script>
