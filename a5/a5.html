@@ -406,9 +406,9 @@ varying vec3 ocsPosition;
 varying vec3 vcsPosition;
 
 void main( void ) { // (f)
-  vec3 rfltVcs = reflect(vcsPosition, vcsNormal);
+  vec3 rfltVcs = reflect(vcsPosition,normalize(vcsNormal));
 
-  vec4 rfltWrd = matrixWorld * vec4(rfltVcs, 1.0);
+  vec4 rfltWrd = matrixWorld * vec4(rfltVcs, 0.0);
 
   if (rfltWrd.y > abs(rfltWrd.x) && rfltWrd.y > abs(rfltWrd.z)) {
     vec4 wcsPosition = matrixWorld * vec4(vcsPosition, 1.0);
@@ -449,9 +449,9 @@ varying vec3 ocsPosition;
 varying vec3 vcsPosition;
 
 void main( void ) { // (f)
-  vec3 rfltVcs = reflect(vcsPosition, vcsNormal);
+  vec3 rfltVcs = reflect(vcsPosition, normalize(vcsNormal));
 
-  vec4 rfltWrd = matrixWorld * vec4(rfltVcs, 1.0);
+  vec4 rfltWrd = matrixWorld * vec4(rfltVcs, 0.0);
 
   if (rfltWrd.y > abs(rfltWrd.x) && rfltWrd.y > abs(rfltWrd.z)) {
     vec4 wcsPosition = matrixWorld * vec4(vcsPosition, 1.0);

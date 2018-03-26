@@ -355,7 +355,7 @@ scene.add( torus );
 
 mirrorGeometry = new THREE.PlaneBufferGeometry(4,4);
 mirror = new THREE.Mesh(mirrorGeometry, rainMaterial);
-mirror.position.x = 4.0;
+mirror.position.x = 0.0;
 mirror.position.z = 5.0;
 mirror.position.y = -1.0;
 mirror.rotation.x = -Math.PI / 2;
