@@ -440,6 +440,24 @@ loader.load( 'obj/armadillo.obj', function ( object ) {
         object.position.y = 1;
 }, onProgress, onError );
 
+var cooper;
+
+loader.load( 'obj/minicooper.obj', function ( object ) {
+  object.traverse( function ( child ) {
+    if ( child instanceof THREE.Mesh ) {
+      child.material = armadilloTexture;
+    }
+  } );
+  scene.add( object );
+        object.scale.set(0.03,0.03,0.03);
+        object.position.x = 0;
+        object.position.y = 4;
+        object.position.z = -20;
+        object.rotation.x = -Math.PI/2;
+        //object.rotation.z = Math.PI;
+        cooper = object;
+}, onProgress, onError );
+
 ///////////////////////////////////////////////////////////////////////////////////////
 // LISTEN TO KEYBOARD
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -457,13 +475,6 @@ function checkKeyboard() {
     light.position.x += 0.1;
   if (keyboard.pressed("R")) {
     rain = !rain;
-  }
-  if (keyboard.pressed("C")) {
-    choose1 = !choose1;
-    envmapMaterial.uniforms.myPotterTexture.value = choose1 ? potterTexture : hp2Texture;
-    envmapMaterial.uniforms.myPotterTexture.update = true;
-    tvMaterial.uniforms.myTexture.value = choose1 ? hp2Texture : potterTexture;
-    tvMaterial.uniforms.myTexture.update = true;
   }
   lightSphere.position.set(light.position.x, light.position.y, light.position.z);
 
@@ -527,6 +538,7 @@ function firework(sec) {
     }
 }
 
+var tickHarry = 0;
 
 function update() {
   checkKeyboard();
@@ -543,6 +555,21 @@ function update() {
   floorMaterial.uniforms[ 'time' ].value = t;
   perlinMaterial.uniforms[ 'time' ].value = t;
   torus1.rotation.z = t;
+  cooper.position.z = cooper.position.z + 0.8*t;
+  if (cooper.position.z > 0) {
+    rain = true;
+  }
+  tickHarry++;
+  var flipHarry = (tickHarry === 100);
+  if (flipHarry) {
+    choose1 = !choose1;
+    envmapMaterial.uniforms.myPotterTexture.value = choose1 ? potterTexture : hp2Texture;
+    envmapMaterial.uniforms.myPotterTexture.update = true;
+    tvMaterial.uniforms.myTexture.value = choose1 ? hp2Texture : potterTexture;
+    tvMaterial.uniforms.myTexture.update = true;
+    flipHarry = false;
+    tickHarry = 0;
+  }
   renderer.render(scene, camera);
 }
 
