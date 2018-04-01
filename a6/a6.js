@@ -54,7 +54,7 @@ scene.add(ambientLight);
 
 var diffuseMaterial = new THREE.MeshLambertMaterial( {color: 0xff0000} );
 
-//////////////////////////////////////////////// 
+////////////////////////////////////////////////
 //  FLOOR with texture                        //
 ////////////////////////////////////////////////
 
@@ -72,9 +72,10 @@ floor.rotation.x = Math.PI / 2;
 //  SHADER & UNIFORMS                         //
 ////////////////////////////////////////////////
 
-var raytracerMaterial = new THREE.ShaderMaterial( {     
-        uniforms: { 
+var raytracerMaterial = new THREE.ShaderMaterial( {
+        uniforms: {
            lightPosition: {value: light.position},
+           light_color: {value: light.color},
            resolution: {value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
            myFloat1: {value: 0.5},
            myFloat2: {value: 0.5}
