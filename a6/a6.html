@@ -125,7 +125,9 @@ vec3 localShade(vec3 P, vec3 N, vec3 I, vec3 surfColor) {
 /// TO DO:
 //  (1) compute and return a normal N.L diffuse shading color;
 //      surfColor is the assigned color of the surface.
-  float NL = dot(normalize(N), normalize(-I));
+  vec3 n = normalize(N);
+  vec3 i = normalize(I);
+  float NL = dot(n, -i);
   if (NL < 0.0) {
     // when N*L < 0, shade the pixel black
     return vec3(0.0, 0.0, 0.0);
@@ -137,7 +139,12 @@ vec3 localShade(vec3 P, vec3 N, vec3 I, vec3 surfColor) {
     shadowRay.bounces = 0;
     float t = rayT(shadowRay);
     if (abs(t - largeT) < epsilon) { // test if t == largeT
-      return light_color*surfColor*NL;
+      vec3 diffuseColor = light_color*surfColor*NL;
+      // Add Phong shading;
+      vec3 R = normalize(reflect(i,n));
+      vec3 V = normalize(-P); // eyePosition(0,0,0) - P
+      float rvn = pow(dot(R,V), 100.0); // implement Phong term with n = 100;
+      return diffuseColor + light_color*surfColor*rvn;
     } else {
       return vec3(0.0, 0.0, 0.0);
     }
@@ -228,8 +235,15 @@ vec3 rayCast(ray myRay)             // return color
   //     Normally this would be a recursive call to
     vec3 reflectedColor = rayCast2(reflectedRay);
 
+    ray refractedRay;
+    refractedRay.origin = P;
+    refractedRay.direction = refract(normalize(myRay.direction),N,1.67);
+    refractedRay.bounces = myRay.bounces + 1;
+    vec3 refractedColor = rayCast2(refractedRay);
+    //vec3 refractedColor = vec3(0.0, 0.0, 0.0);
+
   // (7) return the sum of the local color and the reflected ray, weighted by kLocal and kSpec
-    return (kLocal*localColor + kSpec*reflectedColor);
+    return (kLocal*localColor + kSpec*reflectedColor + kSpec*refractedColor);
   } else {
     return bgColor(myRay);       // return checkeboard texture
   }
