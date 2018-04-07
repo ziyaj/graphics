@@ -81,7 +81,7 @@ float sphere_intersect(ray myRay, sphere sphr) {
   vec3 s0_r0 = myRay.origin - sphr.position;
   float b = 2.0 * dot(myRay.direction, s0_r0);
   float c = dot(s0_r0, s0_r0) - (sphr.radius * sphr.radius);
-  float d = sqrt(b*b-4.0*a*c);               // compute the discriminant
+  float d = sqrt(b*b-4.0*a*c);     // compute the discriminant
   if (d < 0.0) {                   // no solution to the quadratic equation?
     return -1.0;                   // then flag as no intersection
   } else {
@@ -91,7 +91,7 @@ float sphere_intersect(ray myRay, sphere sphr) {
     float tmax = max(t1,t2);
     if (tmax<=0.0+epsilon) return -1.0;
     if (tmin<=0.0+epsilon) return -1.0;
-    return (tmin);              // return smallest positive value
+    return (tmin);                 // return smallest positive value
   }
 }
 
@@ -120,35 +120,50 @@ float rayT(ray myRay)
 /////////////////////////////////////////////////////////////////////////////////
 
 vec3 localShade(vec3 P, vec3 N, vec3 I, vec3 surfColor) {
-  ray shadowRay;
+  //// TO DO:
+  //  (1) compute and return a normal N.L diffuse shading color;
+  //      surfColor is the assigned color of the surface.
+  //  (2) now additionally check to see if the object is in shadow by building and casting
+  //      a shadow ray.  If the point is in shadow, return black. Otherwise return the diffuse shading.
 
-/// TO DO:
-//  (1) compute and return a normal N.L diffuse shading color;
-//      surfColor is the assigned color of the surface.
-  vec3 n = normalize(N);
-  vec3 i = normalize(I);
-  float NL = dot(n, -i);
-  if (NL < 0.0) {
-    // when N*L < 0, shade the pixel black
-    return vec3(0.0, 0.0, 0.0);
-  } else {
-//  (2) now additionally check to see if the object is in shadow by building and casting
-//      a shadow ray.  If the point is in shadow, return black. Otherwise return the diffuse shading.
-    shadowRay.origin = P;
-    shadowRay.direction = normalize(lightPosition - P);
-    shadowRay.bounces = 0;
-    float t = rayT(shadowRay);
-    if (abs(t - largeT) < epsilon) { // test if t == largeT
-      vec3 diffuseColor = light_color*surfColor*NL;
-      // Add Phong shading;
-      vec3 R = normalize(reflect(i,n));
-      vec3 V = normalize(-P); // eyePosition(0,0,0) - P
-      float rvn = pow(dot(R,V), 100.0); // implement Phong term with n = 100;
-      return diffuseColor + light_color*surfColor*rvn;
+  ray shadowRay;                     // set up a shadow ray
+  shadowRay.origin = P;
+  shadowRay.direction = normalize(lightPosition - P);
+  shadowRay.bounces = 0;
+  float t = rayT(shadowRay);
+
+  if (abs(t - largeT) < epsilon) {   // test if the point is in the shadow
+
+    vec3 diffuseColor;               // compute diffuse color
+    vec3 n = normalize(N);
+    vec3 i = normalize(I);
+    vec3 l = -i;
+    float nl = dot(n, l);
+    if (nl < 0.0) {                  // N*L < 0, set diffuseColor to black
+      diffuseColor = vec3(0.0, 0.0, 0.0);
     } else {
-      return vec3(0.0, 0.0, 0.0);
+      diffuseColor = light_color*surfColor*nl;
     }
+
+    vec3 phongColor;                 // [creative component] Phong shading
+    vec3 r = normalize(reflect(i,n));
+    vec3 v = normalize(-P);          // V = eyePosition (0,0,0) - P
+    float rv = dot(r,v);
+    if (rv < 0.0) {                  // R*V < 0, set phongColor to black
+      phongColor = vec3(0.0, 0.0, 0.0);
+    } else {
+      float rvn = pow(rv, 100.0);    // Phong term with n = 100;
+      phongColor = light_color*surfColor*rvn;
+    }
+
+    return diffuseColor + phongColor;
+
+  } else {
+
+    return vec3(0.0, 0.0, 0.0);      // point is in shadow, return black.
+
   }
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -158,15 +173,15 @@ vec3 localShade(vec3 P, vec3 N, vec3 I, vec3 surfColor) {
 vec3 bgColor(ray myRay)
 {
   //  return backgroundColor;
-  vec4 origin = planeMatrix*vec4(myRay.origin, 1.0);        // transform ray into the coord system of the plane
-  vec4 direction = planeMatrix*vec4(myRay.direction, 0.0);  //
+  vec4 origin = planeMatrix*vec4(myRay.origin, 1.0);  // transform ray into the coord system of the plane
+  vec4 direction = planeMatrix*vec4(myRay.direction, 0.0);
 
-  float zPlane = -10.0;                         // in local coords, the plane occupies the xy-plane at z=-10
-  float t = (zPlane - origin.z)/direction.z;    // intersect ray with plane, in local plane coords
-  if (t<0.0) return backgroundColor;            // ray intersects behind the eye, so is looking away from the plane
-  vec3 P = origin.xyz + t*direction.xyz;        // compute intersection point
-  float xf = floor(fract(0.1*P.x)+0.5);   // 0 or 1    computations to compute checkerboard pattern
-  float yf = floor(fract(0.1*P.y)+0.5);   // 0 or 1
+  float zPlane = -10.0;                       // in local coords, the plane occupies the xy-plane at z=-10
+  float t = (zPlane - origin.z)/direction.z;  // intersect ray with plane, in local plane coords
+  if (t<0.0) return backgroundColor;          // ray intersects behind the eye, so is looking away from the plane
+  vec3 P = origin.xyz + t*direction.xyz;      // compute intersection point
+  float xf = floor(fract(0.1*P.x)+0.5);       // 0 or 1 computations to compute checkerboard pattern
+  float yf = floor(fract(0.1*P.y)+0.5);       // 0 or 1 computations to compute checkerboard pattern
   float sum = xf + yf;
   if (sum==1.0)
     return vec3(0.3,0.3,0.3);      // black square
@@ -237,7 +252,7 @@ vec3 rayCast(ray myRay)             // return color
 
     ray refractedRay;
     refractedRay.origin = P;
-    refractedRay.direction = refract(normalize(myRay.direction),N,1.67);
+    refractedRay.direction = refract(normalize(myRay.direction),N,1.0/1.67);
     refractedRay.bounces = myRay.bounces + 1;
     vec3 refractedColor = rayCast2(refractedRay);
     //vec3 refractedColor = vec3(0.0, 0.0, 0.0);
@@ -286,8 +301,8 @@ void main()
   pixelRay.origin = vec3(0,0,0);                        // ray starts at eye:  origin
   pixelRay.direction = normalize(vec3(0.5*uv,-1.0));    // look in the direction of a given pixel
 
-  vec3 rayColor = rayCast(pixelRay);            // cast the initial ray
-  gl_FragColor = vec4(rayColor, 1.0);           // assign color to fragment
+  vec3 rayColor = rayCast(pixelRay);                    // cast the initial ray
+  gl_FragColor = vec4(rayColor, 1.0);                   // assign color to fragment
 }
 </script>
 
