@@ -10,6 +10,7 @@
 var canvas = document.getElementById('canvas');
 var scene = new THREE.Scene();
 var renderer = new THREE.WebGLRenderer();
+var start = Date.now();
 renderer.setClearColor(0xd0f0d0); // set background colour
 canvas.appendChild(renderer.domElement);
 
@@ -75,14 +76,15 @@ backgroundTexture = textureLoader.load( "images/background.jpg" );
 ////////////////////////////////////////////////
 
 var raytracerMaterial = new THREE.ShaderMaterial( {
-        uniforms: {
-           lightPosition: {value: light.position},
-           backgroundTexture: {type: 't', value: backgroundTexture},
-           light_color: {value: light.color},
-           resolution: {value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
-           myFloat1: {value: 0.5},
-           myFloat2: {value: 0.5}
-        },
+  uniforms: {
+     lightPosition: {value: light.position},
+     backgroundTexture: {type: 't', value: backgroundTexture},
+     light_color: {value: light.color},
+     resolution: {value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
+     myFloat1: {value: 0.5},
+     myFloat2: {value: 0.5},
+     time: { type: "f", value: 0.0 }
+  },
   vertexShader: document.getElementById( 'raytracerVertShader' ).textContent,
   fragmentShader: document.getElementById( 'raytracerFragShader' ).textContent
 } );
@@ -147,6 +149,10 @@ function update() {
   var i2 = 0.5+0.5*Math.cos(Date.now()*0.001*5.0);
   raytracerMaterial.uniforms.myFloat2.value = i2;
   raytracerMaterial.uniforms.myFloat2.needsUpdate = true;
+  var t = 0.000025 * ( Date.now() - start );
+  if (t > 0.2) t = 0.2;
+  raytracerMaterial.uniforms.time.value = t;
+  raytracerMaterial.uniforms.time.needsUpdate = true;
   renderer.render(scene, camera);
 }
 
