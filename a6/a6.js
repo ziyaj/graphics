@@ -68,6 +68,8 @@ floor = new THREE.Mesh(floorGeometry, floorMaterial);
 floor.position.y = 0.0;
 floor.rotation.x = Math.PI / 2;
 
+backgroundTexture = textureLoader.load( "images/background.jpg" );
+
 ////////////////////////////////////////////////
 //  SHADER & UNIFORMS                         //
 ////////////////////////////////////////////////
@@ -75,6 +77,7 @@ floor.rotation.x = Math.PI / 2;
 var raytracerMaterial = new THREE.ShaderMaterial( {
         uniforms: {
            lightPosition: {value: light.position},
+           backgroundTexture: {type: 't', value: backgroundTexture},
            light_color: {value: light.color},
            resolution: {value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
            myFloat1: {value: 0.5},
