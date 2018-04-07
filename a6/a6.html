@@ -138,7 +138,7 @@ vec3 localShade(vec3 P, vec3 N, vec3 I, vec3 surfColor) {
     vec3 n = normalize(N);
     vec3 i = normalize(I);
     vec3 l = -i;
-    float nl = dot(n, l);
+    float nl = dot(n,l);
     if (nl < 0.0) {                  // N*L < 0, set diffuseColor to black
       diffuseColor = vec3(0.0, 0.0, 0.0);
     } else {
@@ -172,7 +172,6 @@ vec3 localShade(vec3 P, vec3 N, vec3 I, vec3 surfColor) {
 
 vec3 bgColor(ray myRay)
 {
-  //  return backgroundColor;
   vec4 origin = planeMatrix*vec4(myRay.origin, 1.0);  // transform ray into the coord system of the plane
   vec4 direction = planeMatrix*vec4(myRay.direction, 0.0);
 
@@ -184,33 +183,32 @@ vec3 bgColor(ray myRay)
   float yf = floor(fract(0.1*P.y)+0.5);       // 0 or 1 computations to compute checkerboard pattern
   float sum = xf + yf;
   if (sum==1.0)
-    return vec3(0.3,0.3,0.3);      // black square
+    return vec3(0.3,0.3,0.3);                 // black square
   else
-    return vec3(1,1,1);            // white square
+    return vec3(1,1,1);                       // white square
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 // rayCast2():  cast the reflected ray, and compute a color for it
 /////////////////////////////////////////////////////////////////////////////////
 
-vec3 rayCast2(ray myRay)             // return the color for this reflected ray
+vec3 rayCast2(ray myRay)            // return the color for this reflected ray
 {
-// TODO:  this will be a slightly simplified version of rayCast()
-// (1) find the nearest intersection
-// (2) if hit an object, then compute and return the local color;
-//     otherwise return black
+  // TODO:  this will be a slightly simplified version of rayCast()
+  // (1) find the nearest intersection
+  // (2) if hit an object, then compute and return the local color; otherwise return background
+
   float nearest_t = rayT(myRay);
-  float kSpec = nearestSphere.mtrl.kSpec;         // keep these lines for use in step (7)
-  float kLocal = nearestSphere.mtrl.kLocal;       // keep these lines for use in step (7)
+
   if (nearest_t < largeT) {
     vec3 P = myRay.origin + nearest_t * normalize(myRay.direction);
     vec3 N = normalize(P - nearestSphere.position);
     vec3 I = normalize(P - lightPosition);
-    vec3 localColor = localShade(P,N,I,nearestSphere.mtrl.color);     // local shading
-    return localColor;
+    return localShade(P,N,I,nearestSphere.mtrl.color); // local shading
   } else {
-    return bgColor(myRay);       // return checkeboard texture
+    return bgColor(myRay);                             // return background color
   }
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -219,46 +217,47 @@ vec3 rayCast2(ray myRay)             // return the color for this reflected ray
 
 vec3 rayCast(ray myRay)             // return color
 {
-// TODO:
-// (1) find the nearest intersection
-// (2) if hit an object, then compute and return the local color;
-//     otherwise return black
-
-  float nearest_t = rayT(myRay);                  // find closest object
-  float kSpec = nearestSphere.mtrl.kSpec;         // keep these lines for use in step (7)
-  float kLocal = nearestSphere.mtrl.kLocal;       // keep these lines for use in step (7)
-  if (nearest_t < largeT) {       // hit an object?
-  // return nearestSphere.mtrl.color;           // color this white for now (but replace this with steps 1--4 below)
-
   // TODO:
-  // (1) compute the actual intersection point, P, given the nearest_t value;
-  // (2) compute the normal, N; the center of the sphere is given by nearestSphere.position
-  // (3) compute the incident direction, I
-  // (4) call the localShade function to compute the local shading
+  // (1) find the nearest intersection
+  // (2) if hit an object, then compute and return the local color;
+  //     otherwise return black
+
+  float nearest_t = rayT(myRay);             // find closest object
+  float kSpec = nearestSphere.mtrl.kSpec;    // keep these lines for use in step (7)
+  float kLocal = nearestSphere.mtrl.kLocal;  // keep these lines for use in step (7)
+
+  if (nearest_t < largeT) {                  // hit an object?
+  // return nearestSphere.mtrl.color;        // color this white for now (but replace this with steps 1--4 below)
+
+    // TODO:
+    // (1) compute the actual intersection point, P, given the nearest_t value;
+    // (2) compute the normal, N; the center of the sphere is given by nearestSphere.position
+    // (3) compute the incident direction, I
+    // (4) call the localShade function to compute the local shading
     vec3 P = myRay.origin + nearest_t * normalize(myRay.direction);
     vec3 N = normalize(P - nearestSphere.position);
     vec3 I = normalize(P - lightPosition);
-    vec3 localColor = localShade(P,N,I,nearestSphere.mtrl.color);     // local shading
+    vec3 localColor = localShade(P,N,I,nearestSphere.mtrl.color);
 
-  // (5) develop the parameters for the reflected ray
+    // (5) develop the parameters for the reflected ray
     ray reflectedRay;
     reflectedRay.origin = P;
     reflectedRay.direction = reflect(normalize(myRay.direction),N);
     reflectedRay.bounces = myRay.bounces + 1;
 
-  // (6) compute the color of the reflected ray;
-  //     Normally this would be a recursive call to
+    // (6) compute the color of the reflected ray;
+    //     Normally this would be a recursive call to
     vec3 reflectedColor = rayCast2(reflectedRay);
 
     ray refractedRay;
     refractedRay.origin = P;
-    refractedRay.direction = refract(normalize(myRay.direction),N,1.0/1.67);
+    refractedRay.direction = refract(normalize(myRay.direction),N,1.0/1.5);
     refractedRay.bounces = myRay.bounces + 1;
     vec3 refractedColor = rayCast2(refractedRay);
-    //vec3 refractedColor = vec3(0.0, 0.0, 0.0);
+    //refractedColor = vec3(0.0, 0.0, 0.0);
 
-  // (7) return the sum of the local color and the reflected ray, weighted by kLocal and kSpec
-    return (kLocal*localColor + kSpec*reflectedColor + kSpec*refractedColor);
+    // (7) return the sum of the local color and the reflected ray, weighted by kLocal and kSpec
+    return kLocal*localColor + kSpec*reflectedColor + 0.0*refractedColor;
   } else {
     return bgColor(myRay);       // return checkeboard texture
   }
