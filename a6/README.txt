@@ -6,6 +6,6 @@ I changed kSpec and kLocal as Piazza post @229 suggests to make the image color 
 the picture in assignment description.
 
 For creative components:
-- I implemented Phong Shading
-- I implemented refraction
+- I implemented Phong shading
+- I implemented refraction with rayCast3()
 

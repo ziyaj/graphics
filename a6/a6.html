@@ -153,7 +153,7 @@ vec3 localShade(vec3 P, vec3 N, vec3 I, vec3 surfColor) {
       phongColor = vec3(0.0, 0.0, 0.0);
     } else {
       float rvn = pow(rv, 100.0);    // Phong term with n = 100;
-      phongColor = light_color*surfColor*rvn;
+      phongColor = light_color*rvn;
     }
 
     return diffuseColor + phongColor;
@@ -207,28 +207,30 @@ vec3 rayCast2(ray myRay)            // return the color for this reflected ray
 
 }
 
-vec3 rayCast3(ray myRay)                     // return color
+/////////////////////////////////////////////////////////////////////////////////
+// rayCast3():  cast the refracted ray, and compute a color for it
+/////////////////////////////////////////////////////////////////////////////////
+
+vec3 rayCast3(ray myRay)                     // return refracted color
 {
   float nearest_t = rayT(myRay);             // find closest object
+  float kSpec = nearestSphere.mtrl.kSpec;
+  float kLocal = nearestSphere.mtrl.kLocal;
 
-  if (nearest_t > 5.0*epsilon) {
-    // TODO:
-    // (1) compute the actual intersection point, P, given the nearest_t value;
-    // (2) compute the normal, N; the center of the sphere is given by nearestSphere.position
-    // (3) compute the incident direction, I
-    // (4) call the localShade function to compute the local shading
+  if (nearest_t < largeT) {                  // hit an object?
     vec3 P = myRay.origin + nearest_t * normalize(myRay.direction);
-    vec3 N = normalize(nearestSphere.position - P);
+    vec3 N = normalize(P - nearestSphere.position);
+    vec3 I = normalize(P - myRay.origin);
+    vec3 localColor = localShade(P,N,I,nearestSphere.mtrl.color);
 
-    // [creatvie component] refraction
-    ray refractedRay;
-    refractedRay.origin = P;
-    refractedRay.direction = refract(normalize(myRay.direction),-N,1.5/1.0);
-    refractedRay.bounces = myRay.bounces + 1;
-    vec3 refractedColor = rayCast2(refractedRay);
-    return refractedColor;
+    ray reflectedRay;
+    reflectedRay.origin = P;
+    reflectedRay.direction = reflect(normalize(myRay.direction),N);
+    vec3 reflectedColor = rayCast2(reflectedRay);
+
+    return kLocal*localColor + kSpec*reflectedColor;
   } else {
-    return vec3(0.0, 0.0, 0.0);
+    return bgColor(myRay);       // return background color
   }
 }
 
@@ -272,12 +274,11 @@ vec3 rayCast(ray myRay)             // return color
     // [creatvie component] refraction
     ray refractedRay;
     refractedRay.origin = P;
-    refractedRay.direction = refract(normalize(myRay.direction),N,1.0/1.5);
+    refractedRay.direction = refract(P - myRay.origin,N,1.0/1.5);
     vec3 refractedColor = rayCast3(refractedRay);
-    refractedColor = vec3(0.0, 0.0, 0.0);
 
     // (7) return the sum of the local color and the reflected ray, weighted by kLocal and kSpec
-    return kLocal*localColor + kSpec*reflectedColor + refractedColor;
+    return kLocal*localColor + kSpec*reflectedColor + kSpec*refractedColor;
   } else {
     return bgColor(myRay);       // return checkeboard texture
   }
@@ -291,7 +292,7 @@ void main()
   sphere0.mtrl.color = vec3(0.5, 1.0, 0.5);
   sphere0.mtrl.kSpec = 0.2;
   sphere0.mtrl.kLocal = 1.0;
-  sphere0.radius = 2.0;
+  sphere0.radius = 2.5;
   sphere0.position = vec3(0,0,-7.5);
   sphere0.position.x = -1.0 + myFloat1;
   sphere0.position.y = -1.0 + myFloat2;
