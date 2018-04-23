@@ -3,8 +3,6 @@
 //  Assignment 1 Template
 /////////////////////////////////////////////////////////////////////////////////////////
 
-console.log('Assignment 1 (Ziyang Jin)');
-
 //  another print example
 myvector = new THREE.Vector3(0,1,2);
 console.log('myvector =',myvector);
@@ -43,9 +41,9 @@ window.onscroll = function () {
      window.scrollTo(0,0);
    }
 
-/////////////////////////////////////	
+/////////////////////////////////////
 // ADD LIGHTS  and define a simple material that uses lighting
-/////////////////////////////////////	
+/////////////////////////////////////
 
 light = new THREE.PointLight(0xffffff);
 light.position.set(0,4,2);
@@ -63,17 +61,17 @@ var normalMaterial = new THREE.MeshNormalMaterial( {color: 0xffffff} );
 ////////////////////////////////  OBJECTS /////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////	
+/////////////////////////////////////
 // WORLD COORDINATE FRAME
-/////////////////////////////////////	
+/////////////////////////////////////
 
 var worldFrame = new THREE.AxisHelper(5) ;
 scene.add(worldFrame);
 
 
-/////////////////////////////////////	
+/////////////////////////////////////
 // FLOOR with texture
-/////////////////////////////////////	
+/////////////////////////////////////
 
 floorTexture = new THREE.ImageUtils.loadTexture('images/floor.jpg');
 floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
@@ -86,7 +84,7 @@ floor.rotation.x = Math.PI / 2;
 scene.add(floor);
 
 ///////////////////////////////////////////////////////////////////////
-//   sphere, representing the light 
+//   sphere, representing the light
 ///////////////////////////////////////////////////////////////////////
 
 sphereGeometry = new THREE.SphereGeometry(0.3, 32, 32);    // radius, segments, segments
@@ -128,7 +126,7 @@ scene.add( box2 );
 
 
 ///////////////////////////////////////////////////////////////////////
-//  mcc:  multi-colour cube     [https://stemkoski.github.io/Three.js/HelloWorld.html] 
+//  mcc:  multi-colour cube     [https://stemkoski.github.io/Three.js/HelloWorld.html]
 ///////////////////////////////////////////////////////////////////////
 
   // Create an array of materials to be used in a cube, one for each side
@@ -141,7 +139,7 @@ cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x33ff33 } ) );
 cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x3333ff } ) );
 cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x8833ff } ) );
 var mccMaterials = new THREE.MeshFaceMaterial( cubeMaterialArray );
-  // Cube parameters: width (x), height (y), depth (z), 
+  // Cube parameters: width (x), height (y), depth (z),
   //        (optional) segments along x, segments along y, segments along z
 var mccGeometry = new THREE.BoxGeometry( 1.5, 1.5, 1.5, 1, 1, 1 );
 // using THREE.MeshFaceMaterial() in the constructor below
@@ -149,13 +147,13 @@ var mccGeometry = new THREE.BoxGeometry( 1.5, 1.5, 1.5, 1, 1, 1 );
 mcc = new THREE.Mesh( mccGeometry, mccMaterials );
 mcc.position.set(-1, 4, 0);
 mcc.rotation.set(0, 1, 1);
-scene.add( mcc );	
+scene.add( mcc );
 
 /////////////////////////////////////////////////////////////////////////
 // cylinder
 /////////////////////////////////////////////////////////////////////////
 
-// parameters:    
+// parameters:
 //    radiusAtTop, radiusAtBottom, height, segmentsAroundRadius, segmentsAlongHeight, segmentsAlongHeight
 const cylinderGeometry = new THREE.CylinderGeometry( 0.30, 0.30, 0.80, 20, 4 );
 const cylinder = new THREE.Mesh( cylinderGeometry, normalMaterial);
@@ -167,7 +165,7 @@ scene.add( cylinder );
 // cone
 /////////////////////////////////////////////////////////////////////////
 
-// parameters:    
+// parameters:
 //    radiusAtTop, radiusAtBottom, height, segmentsAroundRadius, segmentsAlongHeight, segmentsAlongHeight
 const coneGeometry = new THREE.CylinderGeometry( 0.0, 0.30, 0.80, 20, 4 );
 const cone = new THREE.Mesh( coneGeometry, normalMaterial);
@@ -250,7 +248,7 @@ new THREE.SourceLoader().load(shaderFiles, function(shaders) {
 })
 
 
-//   NOTE:  Unfortunately, the following loading code does not easily allow for multiple 
+//   NOTE:  Unfortunately, the following loading code does not easily allow for multiple
 //          instantiations of the OBJ geometry.
 
 function loadOBJ(file, material, scale, xOff, yOff, zOff, xRot, yRot, zRot) {

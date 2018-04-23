@@ -1,7 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 //  UBC CPSC 314,  Vjan2018
 //  Assignment Template
-//  Ziyang Jin
 /////////////////////////////////////////////////////////////////////////////////////////
 
 var backwardsMotion = 1;
@@ -63,7 +62,7 @@ var customObject;
 var laserLine;
 var models;
 
-// head phone 
+// head phone
 var headPhone1; // flat box
 var headPhone2; // cylinder
 var headPhone3; // smaller cylinder
@@ -171,7 +170,7 @@ class KFobj {
 
 // keyframes for the detailed T-rex:   name, time, [x, y, z]
 const JUMP_HIGHER = 4;
-var trexKFobj = new KFobj(trexSetMatrices);     
+var trexKFobj = new KFobj(trexSetMatrices);
 trexKFobj.add(new Keyframe('rest pose', 0.0, [0, 1.9, 0]));
 trexKFobj.add(new Keyframe('rest pose', 1.0, [1, 1.9, 0]));
 trexKFobj.add(new Keyframe('rest pose', 2.0, [1, 2.9 + JUMP_HIGHER, 0]));
@@ -268,7 +267,7 @@ mytrexKFobj.add(new Keyframe('rest pose', 11.5, [16*DIV, 1,   INNER_ANGLE, -INNE
 mytrexKFobj.add(new Keyframe('rest pose', 12.0, [17*DIV, 1,   OUTER_ANGLE, -OUTER_ANGLE]));
 
 // optional:   allow avar indexing by name
-// i.e., instead of   avar[1]    one can also use:    avar[ trexIndex["y"]]  
+// i.e., instead of   avar[1]    one can also use:    avar[ trexIndex["y"]]
 var trexIndex = {"x":0, "y":1, "z":2};   Object.freeze(trexIndex);
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -318,9 +317,9 @@ new THREE.SourceLoader().load( shaderFiles, function(shaders) {
 
 var meshes = {};   // Meshes index
 
-////////////////////////////////////////////////////////////////////////  
+////////////////////////////////////////////////////////////////////////
 // init():  setup up scene
-////////////////////////////////////////////////////////////////////////  
+////////////////////////////////////////////////////////////////////////
 
 function init() {
     console.log('init called');
@@ -352,9 +351,9 @@ function initCamera() {
     controls.autoRotate = false;
 };
 
-////////////////////////////////////////////////////////////////////////  
+////////////////////////////////////////////////////////////////////////
 // initLights():  SETUP LIGHTS
-////////////////////////////////////////////////////////////////////////  
+////////////////////////////////////////////////////////////////////////
 
 function initLights() {
     light = new THREE.PointLight(0xffffff);
@@ -381,9 +380,9 @@ function initLights() {
     scene.add(ambientLight);
 };
 
-////////////////////////////////////////////////////////////////////////  
+////////////////////////////////////////////////////////////////////////
 // initObjects():  setup up scene
-////////////////////////////////////////////////////////////////////////  
+////////////////////////////////////////////////////////////////////////
 
 function initObjects() {
 
@@ -396,7 +395,7 @@ function initObjects() {
 
     // sphere representing light source
     sphereGeometry = new THREE.SphereGeometry( 0.3, 32, 32 );    // radius, segments, segments
-    sphere = new THREE.Mesh( sphereGeometry, basicMaterial );    
+    sphere = new THREE.Mesh( sphereGeometry, basicMaterial );
     sphere.position.set(0, 4, 2);
     sphere.position.set(light.position.x, light.position.y, light.position.z);
     scene.add( sphere );
@@ -410,7 +409,7 @@ function initObjects() {
     // box = new THREE.Mesh( boxGeometry, diffuseMaterial );
     // box.position.set(-6, 0.5, -8);
     // scene.add( box );
-    
+
     // floor
     floorGeometry = new THREE.PlaneBufferGeometry( 25, 25 );
     floor = new THREE.Mesh( floorGeometry, floorMaterial );
@@ -425,7 +424,7 @@ function initObjects() {
     // cylinder.matrixAutoUpdate = true;
     // cylinder.position.set(2, 0.5, -8);
 
-    // //  mcc:  multi-colour cube     [https://stemkoski.github.io/Three.js/HelloWorld.html] 
+    // //  mcc:  multi-colour cube     [https://stemkoski.github.io/Three.js/HelloWorld.html]
     // var cubeMaterialArray = [];    // one material for each side of cube;  order: x+,x-,y+,y-,z+,z-
     // cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0xff3333 } ) );
     // cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0xff8800 } ) );
@@ -435,10 +434,10 @@ function initObjects() {
     // cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x8833ff } ) );
     // var mccMaterials = new THREE.MeshFaceMaterial( cubeMaterialArray );
     // var mccGeometry = new THREE.BoxGeometry( 1, 1, 1, 1, 1, 1 );   // xyzz size,  xyz # segs
-    // mcc = new THREE.Mesh( mccGeometry, mccMaterials );   // 
+    // mcc = new THREE.Mesh( mccGeometry, mccMaterials );   //
     // mcc.position.set(-4, 0.5, -8);
-    // scene.add( mcc ); 
-    
+    // scene.add( mcc );
+
     // // cone
     // coneGeometry = new THREE.CylinderGeometry( 0.0, 0.50, 1, 20, 4 ); // rTop, rBot, h, #rsegs, #hsegs
     // cone = new THREE.Mesh( coneGeometry, diffuseMaterial );
@@ -446,7 +445,7 @@ function initObjects() {
     // scene.add( cone );
 
     // //  CUSTOM OBJECT
-    // var geom = new THREE.Geometry(); 
+    // var geom = new THREE.Geometry();
     // var v0 = new THREE.Vector3(0, 0, 0);
     // var v1 = new THREE.Vector3(3, 0, 0);
     // var v2 = new THREE.Vector3(0, 3, 0);
@@ -463,7 +462,7 @@ function initObjects() {
     // scene.add( customObject );
 
     // laser line
-    var geom = new THREE.Geometry(); 
+    var geom = new THREE.Geometry();
     var vL0 = new THREE.Vector3(0, 0, 0);
     var vL1 = new THREE.Vector3(5, 5, 5);
     // use three line segments to give it thickness
@@ -595,9 +594,9 @@ function initObjects() {
     meteoroidTail.position.set(2.5, 1, 0);
 }
 
-////////////////////////////////////////////////////////////////////////  
+////////////////////////////////////////////////////////////////////////
 // initFileObjects():    read object data from OBJ files;  see onResourcesLoaded() for instances
-////////////////////////////////////////////////////////////////////////  
+////////////////////////////////////////////////////////////////////////
 
 function initFileObjects() {
 
@@ -684,7 +683,7 @@ function update() {
 
   if (!RESOURCES_LOADED) {       // wait until all OBJs are loaded
     requestAnimationFrame(update);
-    return;        
+    return;
   }
 
   /////////// animated objects ////////////////
@@ -761,8 +760,8 @@ function trexSetMatrices(avars) {
   var trex2 = meshes["trex2"];        //   reference to the Object
 
   trex2.matrixAutoUpdate = false;     // tell three.js not to over-write our updates
-  trex2.matrix.identity();              
-  trex2.matrix.multiply(new THREE.Matrix4().makeTranslation(avars[0] - 16, avars[1], avars[2]));  
+  trex2.matrix.identity();
+  trex2.matrix.multiply(new THREE.Matrix4().makeTranslation(avars[0] - 16, avars[1], avars[2]));
   trex2.matrix.multiply(new THREE.Matrix4().makeRotationY(-Math.PI/2));
   trex2.matrix.multiply(new THREE.Matrix4().makeScale(1.5, 1.5, 1.5));
   trex2.updateMatrixWorld();
@@ -793,7 +792,7 @@ function mytrexSetMatrices(avars) {
     trex1.matrix.multiply(new THREE.Matrix4().makeTranslation(RADIUS * Math.cos(avars[0]), 2, RADIUS * Math.sin(avars[0])));
     trex1.matrix.multiply(new THREE.Matrix4().makeRotationY(-avars[0] + Math.PI));
     trex1.matrix.multiply(new THREE.Matrix4().makeScale(1.5, 1.5, 1.5));
-    trex1.updateMatrixWorld();    
+    trex1.updateMatrixWorld();
 }
 
 function meteo(sec) {

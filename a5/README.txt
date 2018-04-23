@@ -1,10 +1,6 @@
-name:      Ziyang Jin
-student #: 34893140
-cs id:     f4a0b
-
 NOTES:
 
-Press "R" to explode the water ball in the middle. Hold "R" to stop the water balls.
+Hold "R" to stop the water balls.
 (sometimes the keystore does not respond properly; try a few times)
 
 The fireball and the middle water ball code, which uses perlin noise, is originated from an online tutorial https://www.clicktorelease.com/blog/vertex-displacement-noise-3d-webgl-glsl-three-js/
